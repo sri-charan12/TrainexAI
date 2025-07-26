@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Diet | TrainexAI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    :root {
+      --accent-color: #ff5c9e;
+      --accent-secondary: #6a4bcf;
+      --bg-dark: #0c0c0c;
+      --bg-darker: #121212;
+      --bg-widget: #1c1c1c;
+      --text-light: #eee;
+      --text-muted: #bbb;
+      --shadow-color: rgba(255, 92, 158, 0.25);
+      --btn-bg-hover: rgba(255, 92, 158, 0.2);
+      --btn-focus-shadow: 0 0 6px var(--accent-color);
+      --transition-speed: 0.3s;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-light);
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      display: flex;
+      min-height: 100vh;
+      flex-direction: column;
+    }
+
+    /* Navigation Bar */
+    nav {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      background: rgba(20, 20, 20, 0.95);
+      backdrop-filter: blur(14px);
+      box-shadow: 0 2px 12px var(--shadow-color);
+      z-index: 1000;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.85rem 2rem;
+    }
+    .logo-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.logo {
+  height: 42px;
+  width: auto;
+  transition: transform 0.3s ease, filter 0.3s ease;
+  filter: drop-shadow(0 0 6px var(--accent-color));
+}
+
+.logo:hover {
+  transform: scale(1.08);
+  filter: drop-shadow(0 0 10px var(--accent-color));
+}
+
+.logo-text {
+  font-weight: 700;
+  font-size: 1.7rem;
+  color: var(--accent-color);
+  letter-spacing: 2px;
+  text-shadow: 0 0 8px var(--accent-color);
+  transition: text-shadow 0.3s ease;
+}
+
+.logo-container:hover .logo-text {
+  text-shadow: 0 0 12px var(--accent-color);
+}
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 1.5rem;
+      margin: 0;
+      padding: 0;
+    }
+    nav ul li a,
+    nav ul li button {
+      color: var(--text-light);
+      font-weight: 500;
+      text-decoration: none;
+      padding: 0.6rem 1.1rem;
+      border-radius: 8px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-size: 1.1rem;
+      transition: all var(--transition-speed) ease;
+      box-shadow: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    nav ul li a:hover,
+    nav ul li a:focus,
+    nav ul li button:hover,
+    nav ul li button:focus {
+      color: var(--accent-color);
+      background: var(--btn-bg-hover);
+      outline: none;
+      text-shadow: var(--btn-focus-shadow);
+      box-shadow: 0 0 10px var(--accent-color);
+      transform: translateY(-2px);
+    }
+    .nav-icon {
+      font-size: 1rem;
+    }
+
+    /* Sidebar */
+    aside {
+      width: 250px;
+      background: linear-gradient(to bottom, #111, #1a1a1a);
+      padding: 3rem 1.5rem 1.5rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      box-shadow: 2px 0 15px var(--shadow-color);
+      margin-top: 56px;
+      position: fixed;
+      height: calc(100vh - 56px);
+      transition: transform var(--transition-speed) ease;
+    }
+    aside h2 {
+      color: var(--accent-color);
+      margin-bottom: 2rem;
+      font-size: 1.6rem;
+      text-align: center;
+      font-weight: 600;
+      user-select: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    aside button {
+      background: transparent;
+      color: var(--text-light);
+      padding: 0.9rem 1.2rem;
+      border: none;
+      border-radius: 12px;
+      text-align: left;
+      font-size: 1.05rem;
+      cursor: pointer;
+      transition: all var(--transition-speed) ease;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      box-shadow: none;
+    }
+    aside button:hover,
+    aside button:focus {
+      background: #222;
+      transform: translateX(8px);
+      outline: none;
+      box-shadow: 0 0 8px var(--accent-color);
+    }
+    .sidebar-icon {
+      width: 20px;
+      text-align: center;
+    }
+
+    /* Highlight Support Button */
+    aside button.support-btn {
+      background: var(--accent-color);
+      color: #fff;
+      font-weight: 600;
+      box-shadow: 0 4px 12px var(--accent-color);
+      transition: all var(--transition-speed) ease;
+      border-radius: 16px;
+      margin-top: 1rem;
+    }
+    aside button.support-btn:hover,
+    aside button.support-btn:focus {
+      background: #ff438e;
+      box-shadow: 0 6px 20px #ff438e;
+      transform: translateX(8px) scale(1.05);
+      outline: none;
+    }
+
+    /* Main content */
+    main {
+      flex: 1;
+      padding: 3rem 3rem 2rem 2.5rem;
+      overflow-y: auto;
+      background: var(--bg-darker);
+      margin-top: 56px;
+      margin-left: 250px;
+    }
+    h1 {
+      font-size: 2.8rem;
+      background: linear-gradient(135deg, var(--accent-secondary), var(--accent-color));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 2.4rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    .welcome-icon {
+      font-size: 2.5rem;
+    }
+
+    /* Diet Plan Styles */
+    .diet-toggle {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 2rem;
+      background: var(--bg-widget);
+      padding: 0.5rem;
+      border-radius: 50px;
+      max-width: 400px;
+    }
+    .diet-toggle button {
+      flex: 1;
+      padding: 0.8rem 1.5rem;
+      border: none;
+      background: transparent;
+      color: var(--text-light);
+      font-weight: 600;
+      cursor: pointer;
+      border-radius: 50px;
+      transition: all var(--transition-speed) ease;
+    }
+    .diet-toggle button.active {
+      background: var(--accent-color);
+      color: white;
+      box-shadow: 0 4px 12px var(--shadow-color);
+    }
+
+    .meal-plan {
+      background: var(--bg-widget);
+      border-radius: 20px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 12px 38px var(--shadow-color);
+    }
+    .meal-plan h2 {
+      color: var(--accent-color);
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .meal-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+    .meal-card {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 16px;
+      padding: 1.5rem;
+      transition: all var(--transition-speed) ease;
+      border-left: 3px solid var(--accent-color);
+    }
+    .meal-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 24px var(--shadow-color);
+    }
+    .meal-card h3 {
+      color: var(--text-light);
+      margin-bottom: 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .meal-card p {
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+      font-size: 0.95rem;
+    }
+    .meal-macros {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+    .macro-item {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+    .macro-item span {
+      color: var(--accent-color);
+      font-weight: 600;
+    }
+    .meal-actions {
+      display: flex;
+      gap: 0.8rem;
+      margin-top: 1rem;
+    }
+    .meal-actions button {
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all var(--transition-speed) ease;
+    }
+    .primary-btn {
+      background: var(--accent-color);
+      color: white;
+    }
+    .secondary-btn {
+      background: transparent;
+      color: var(--text-light);
+      border: 1px solid var(--accent-color) !important;
+    }
+    .meal-actions button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px var(--shadow-color);
+    }
+
+    .nutrition-summary {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .nutrition-card {
+      background: var(--bg-widget);
+      border-radius: 16px;
+      padding: 1.5rem;
+      text-align: center;
+      box-shadow: 0 8px 24px var(--shadow-color);
+    }
+    .nutrition-card h3 {
+      color: var(--accent-color);
+      margin-bottom: 0.5rem;
+      font-size: 1.1rem;
+    }
+    .nutrition-value {
+      font-size: 1.8rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--accent-secondary), var(--accent-color));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .nutrition-goal {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    /* Footer */
+    footer {
+      background: rgba(15, 15, 15, 0.95);
+      color: var(--text-light);
+      text-align: center;
+      padding: 2rem 1rem 3rem 1rem;
+      box-shadow: 0 -3px 15px var(--shadow-color);
+      margin-top: auto;
+      user-select: none;
+      font-size: 0.95rem;
+      backdrop-filter: blur(10px);
+    }
+    .footer-content {
+      display: flex;
+      justify-content: space-around;
+      max-width: 1200px;
+      margin: 0 auto 1.5rem auto;
+      flex-wrap: wrap;
+      gap: 2.5rem;
+    }
+    .footer-links {
+      min-width: 160px;
+      flex: 1;
+    }
+    .footer-links h3 {
+      margin-bottom: 1rem;
+      color: var(--accent-color);
+      font-weight: 600;
+      font-size: 1.2rem;
+    }
+    .footer-links ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .footer-links li {
+      margin-bottom: 0.9rem;
+    }
+    .footer-links a {
+      color: #eee;
+      text-decoration: none;
+      font-weight: 400;
+      transition: color var(--transition-speed) ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      justify-content: center;
+    }
+    .footer-links a:hover,
+    .footer-links a:focus {
+      color: var(--accent-color);
+      outline: none;
+      text-shadow: 0 0 4px var(--accent-color);
+    }
+    .footer-social {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .footer-social a {
+      color: var(--text-light);
+      font-size: 1.3rem;
+      transition: all var(--transition-speed) ease;
+    }
+    .footer-social a:hover {
+      color: var(--accent-color);
+      transform: translateY(-3px);
+    }
+    .footer-copyright {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      user-select: none;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 992px) {
+      aside {
+        transform: translateX(-100%);
+        z-index: 900;
+      }
+      aside.active {
+        transform: translateX(0);
+      }
+      main {
+        margin-left: 0;
+      }
+      .menu-toggle {
+        display: block !important;
+      }
+    }
+    @media (max-width: 768px) {
+      nav ul {
+        display: none;
+      }
+      .nav-actions {
+        display: flex;
+        gap: 1rem;
+      }
+      .diet-toggle {
+        max-width: 100%;
+      }
+    }
+    @media (max-width: 576px) {
+      main {
+        padding: 2rem 1.5rem;
+      }
+      h1 {
+        font-size: 2rem;
+      }
+      .nutrition-summary {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Menu Toggle Button */
+    .menu-toggle {
+      display: none;
+      background: transparent;
+      border: none;
+      color: var(--text-light);
+      font-size: 1.5rem;
+      cursor: pointer;
+      transition: all var(--transition-speed) ease;
+    }
+    .menu-toggle:hover {
+      color: var(--accent-color);
+    }
+
+    /* Dark Mode Toggle */
+    .theme-toggle {
+      background: transparent;
+      border: none;
+      color: var(--text-light);
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: all var(--transition-speed) ease;
+    }
+    .theme-toggle:hover {
+      color: var(--accent-color);
+      transform: rotate(30deg);
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation Bar -->
+  <nav>
+    <button class="menu-toggle" aria-label="Toggle menu" tabindex="0">
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="logo-container" tabindex="0">
+    <img src="logo.jpg" alt="TrainexAI Logo" class="logo">
+    <span class="logo-text">TrainexAI</span>
+  </div>
+    <ul id="nav-links" aria-label="Primary navigation">
+      <li><a href="index.html#home" tabindex="0"><i class="fas fa-home nav-icon"></i> Home</a></li>
+      <li><a href="index.html#about" tabindex="0"><i class="fas fa-info-circle nav-icon"></i> About</a></li>
+      <li><button id="btn-signin" aria-label="Sign in to your account" tabindex="0"><i class="fas fa-sign-in-alt nav-icon"></i> Sign In</button></li>
+      <li><button id="btn-signup" aria-label="Create a new account" tabindex="0"><i class="fas fa-user-plus nav-icon"></i> Sign Up</button></li>
+      <li><a href="index.html#pricing" tabindex="0"><i class="fas fa-tag nav-icon"></i> Pricing</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button class="theme-toggle" aria-label="Toggle theme" tabindex="0">
+        <i class="fas fa-moon"></i>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Sidebar -->
+  <aside role="navigation" aria-label="Sidebar navigation">
+    <h2><i class="fas fa-robot"></i> TrainexAI</h2>
+    <button onclick="location.href='profiledash.html'" aria-label="Go to Profile">
+      <i class="fas fa-user sidebar-icon"></i> Profile
+    </button>
+    <button onclick="location.href='aiwebcam.html'" aria-label="Go to AI Web Cam">
+      <i class="fas fa-camera sidebar-icon"></i> AI Web Cam
+    </button>
+    <button onclick="location.href='aidiet.html'" aria-label="Go to AI Diet">
+      <i class="fas fa-utensils sidebar-icon"></i> AI Diet
+    </button>
+    <button onclick="location.href='gym.html'" aria-label="Go to Gym Requirements">
+      <i class="fas fa-dumbbell sidebar-icon"></i> Gym Requirements
+    </button>
+    <button onclick="location.href='supplements.html'" aria-label="Go to Supplements">
+      <i class="fas fa-pills sidebar-icon"></i> Supplements
+    </button>
+    <button onclick="location.href='sports.html'" aria-label="Go to Sports Recommendations">
+      <i class="fas fa-running sidebar-icon"></i> Sports
+    </button>
+    <button onclick="location.href='transactions.html'" aria-label="Go to Transactions">
+      <i class="fas fa-receipt sidebar-icon"></i> Transactions
+    </button>
+    <button onclick="location.href='settings.html'" aria-label="Go to Settings">
+      <i class="fas fa-cog sidebar-icon"></i> Settings
+      <span class="badge">3</span>
+    </button>
+    <!-- Enhanced Support button -->
+    <button class="support-btn" onclick="location.href='settings.html'" aria-label="Go to Support">
+      <i class="fas fa-life-ring sidebar-icon"></i> Support
+    </button>
+  </aside>
+
+  <!-- Main content -->
+  <main>
+    <h1><i class="fas fa-utensils welcome-icon"></i> AI Diet Plan</h1>
+
+    <div class="diet-toggle">
+      <button class="active" id="btn-vegan">Vegan</button>
+      <button id="btn-nonvegan">Non-Vegan</button>
+    </div>
+
+    <div class="nutrition-summary">
+      <div class="nutrition-card">
+        <h3><i class="fas fa-fire"></i> Calories</h3>
+        <div class="nutrition-value">1,850</div>
+        <div class="nutrition-goal">Goal: 2,200 kcal</div>
+      </div>
+      <div class="nutrition-card">
+        <h3><i class="fas fa-drumstick-bite"></i> Protein</h3>
+        <div class="nutrition-value">120g</div>
+        <div class="nutrition-goal">Goal: 150g</div>
+      </div>
+      <div class="nutrition-card">
+        <h3><i class="fas fa-bread-slice"></i> Carbs</h3>
+        <div class="nutrition-value">220g</div>
+        <div class="nutrition-goal">Goal: 250g</div>
+      </div>
+      <div class="nutrition-card">
+        <h3><i class="fas fa-oil-can"></i> Fats</h3>
+        <div class="nutrition-value">65g</div>
+        <div class="nutrition-goal">Goal: 70g</div>
+      </div>
+    </div>
+
+    <div class="meal-plan" id="vegan-plan">
+      <h2><i class="fas fa-sun"></i> Today's Vegan Meal Plan</h2>
+      <div class="meal-cards">
+        <div class="meal-card">
+          <h3><i class="fas fa-egg"></i> Breakfast</h3>
+          <p>Tofu scramble with spinach, mushrooms, and whole wheat toast</p>
+          <div class="meal-macros">
+            <div class="macro-item"><span>420</span> kcal</div>
+            <div class="macro-item"><span>22g</span> protein</div>
+            <div class="macro-item"><span>45g</span> carbs</div>
+            <div class="macro-item"><span>15g</span> fat</div>
+          </div>
+          <div class="meal-actions">
+            <button class="primary-btn">Log Meal</button>
+            <button class="secondary-btn">Alternatives</button>
+          </div>
+        </div>
+        <div class="meal-card">
+          <h3><i class="fas fa-apple-alt"></i> Snack</h3>
+          <p>Mixed nuts and berries with almond milk smoothie</p>
+          <div class="meal-macros">
+            <div class="macro-item"><span>280</span> kcal</div>
+            <div class="macro-item"><span>8g</span> protein</div>
+            <div class="macro-item"><span>30g</span> carbs</div>
+            <div class="macro-item"><span>15g</span> fat</div>
+          </div>
+          <div class="meal-actions">
+            <button class="primary-btn">Log Meal</button>
+            <button class="secondary-btn">Alternatives</button>
+          </div>
+        </div>
+        <div class="meal-card">
+          <h3><i class="fas fa-drumstick-bite"></i> Lunch</h3>
+          <p>Lentil curry with brown rice and roasted vegetables</p>
+          <div class="meal-macros">
+            <div class="macro-item"><span>550</span> kcal</div>
+            <div class="macro-item"><span>30g</span> protein</div>
+            <div class="macro-item"><span>75g</span> carbs</div>
+            <div class="macro-item"><span>12g</span> fat</div>
+          </div>
+          <div class="meal-actions">
+            <button class="primary-btn">Log Meal</button>
+            <button class="secondary-btn">Alternatives</button>
+          </div>
+        </div>
+        <div class="meal-card">
+          <h3><i class="fas fa-seedling"></i> Dinner</h3>
+          <p>Chickpea and quinoa salad with tahini dressing</p>
+          <div class="meal-macros">
+            <div class="macro-item"><span>480</span> kcal</div>
+            <div class="macro-item"><span>25g</span> protein</div>
+            <div class="macro-item"><span>60g</span> carbs</div>
+            <div class="macro-item"><span>15g</span> fat</div>
+          </div>
+          <div class="meal-actions">
+            <button class="primary-btn">Log Meal</button>
+            <button class="secondary-btn">Alternatives</button>
+          </div>
+        </div>
+        <div class="meal-card">
+          <h3><i class="fas fa-ice-cream"></i> Dessert</h3>
+          <p>Dark chocolate avocado mousse with raspberries</p>
+          <div class="meal-macros">
+            <div class="macro-item"><span>220</span> kcal</div>
+            <div class="macro-item"><span>4g</span> protein</div>
+            <div class="macro-item"><span>25g</span> carbs</div>
+            <div class="macro-item"><span>12g</span> fat</div>
+          </div>
+          <div class="meal-actions">
+            <button class="primary-btn">Log Meal</button>
+            <button class="secondary-btn">Alternatives</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="meal-plan" id="nonvegan-plan" style="display: none;">
+      <h2><i class="fas fa-bacon"></i> Today's Non-Vegan Meal Plan</h2>
+      <div class="meal-cards">
+        <div class="meal-card">
+          <h3><i class="fas fa-egg"></i> Breakfast</h3>
+          <p>Scrambled eggs with smoked salmon and whole grain toast</p>
+          <div class="meal-macros">
+            <div class="macro-item"><span>450</span> kcal</div>
+            <div class="macro-item"><span>30g</span> protein</div>
+            <div class="macro-item"><span>35g</span> carbs</div>
+            <div class="macro-item"><span>20g</span> fat</div>
+          </div>
+          <div class="meal-actions">
+            <button class="primary-btn">Log Meal</button>
+            <button class="secondary-btn">Alternatives</button>
+          </div>
+        </div>
+        <div class="meal-card">
+          <h3><i class="fas fa-apple-alt"></i> Snack</h3>
+          <p>Greek yogurt with honey and walnuts</p>
+          <div class="meal-macros">
+            <div class="macro-item"><span>300</span> kcal</div>
+            <div class="macro-item"><span>15g</span> protein</div>
+            <div class="macro-item"><span>25g</span> carbs</div>
+            <div class="macro-item"><span>15g</span> fat</div>
+          </div>
+          <div class="meal-actions">
+            <button class="primary-btn">Log Meal</button>
+            <button class="secondary-btn">Alternatives</button>
+          </div>
+        </div>
+        <div class="meal-card">
+          <h3><i class="fas fa-drumstick-bite"></i> Lunch</h3>
+          <p>Grilled chicken with sweet potato and steamed broccoli</p>
+          <div class="meal-macros">
+            <div class="macro-item"><span>600</span> kcal</div>
+            <div class="macro-item"><span>45g</span> protein</div>
+            <div class="macro-item"><span>50g</span> carbs</div>
+            <div class="macro-item"><span>20g</span> fat</div>
+          </div>
+          <div class="meal-actions">
+            <button class="primary-btn">Log Meal</button>
+            <button class="secondary-btn">Alternatives</button>
+          </div>
+        </div>
+        <div class="meal-card">
+          <h3><i class="fas fa-fish"></i> Dinner</h3>
+          <p>Baked salmon with quinoa and asparagus</p>
+          <div class="meal-macros">
+            <div class="macro-item"><span>550</span> kcal</div>
+            <div class="macro-item"><span>40g</span> protein</div>
+            <div class="macro-item"><span>45g</span> carbs</div>
+            <div class="macro-item"><span>25g</span> fat</div>
+          </div>
+          <div class="meal-actions">
+            <button class="primary-btn">Log Meal</button>
+            <button class="secondary-btn">Alternatives</button>
+          </div>
+        </div>
+        <div class="meal-card">
+          <h3><i class="fas fa-ice-cream"></i> Dessert</h3>
+          <p>Cottage cheese with mixed berries</p>
+          <div class="meal-macros">
+            <div class="macro-item"><span>200</span> kcal</div>
+            <div class="macro-item"><span>20g</span> protein</div>
+            <div class="macro-item"><span>20g</span> carbs</div>
+            <div class="macro-item"><span>5g</span> fat</div>
+          </div>
+          <div class="meal-actions">
+            <button class="primary-btn">Log Meal</button>
+            <button class="secondary-btn">Alternatives</button>
+          </div>
+        </div>
+      </div>
+    </div>
+ <!-- Footer -->
+    <footer>
+      <div class="footer-social">
+        <a href="https://www.facebook.com/share/p/12EZbqKwPMY/" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+        <a href="https://www.instagram.com/trainxai?igsh=NjkxYXZveXBkamM5" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+        <a href="http://www.linkedin.com/in/trainx-ai-949624367" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+         
+      </div>
+      <div class="footer-content">
+        <div class="footer-links" aria-label="About Us">
+          <h3>About Us</h3>
+          <ul>
+            <li><a href="index.html#about" tabindex="0"><i class="fas fa-book-open"></i> Our Story</a></li>
+            <li><a href="index.html#founders" tabindex="0"><i class="fas fa-users"></i> Our Team</a></li>
+          </ul>
+        </div>
+        <div class="footer-links" aria-label="Help & Support">
+          <h3>Help & Support</h3>
+          <ul>
+            
+            <li><a href="settings.html" tabindex="0"><i class="fas fa-envelope"></i> Contact Us</a></li>
+            <li><a href="terms.html" tabindex="0"><i class="fas fa-file-contract"></i> Terms</a></li>
+          </ul>
+        </div>
+        </div>
+      </div>
+      <div class="footer-copyright" role="contentinfo">
+        <p>&copy; 2025 TrainexAI. All rights reserved.</p>
+      </div>
+    </footer>
+    
+  </main>
+
+  <script>
+    // Toggle sidebar on mobile
+    document.querySelector('.menu-toggle').addEventListener('click', function() {
+      document.querySelector('aside').classList.toggle('active');
+    });
+
+    // Simple theme toggle example
+    document.querySelector('.theme-toggle').addEventListener('click', function() {
+      document.body.classList.toggle('light-theme');
+      const icon = this.querySelector('i');
+      if (document.body.classList.contains('light-theme')) {
+        icon.classList.remove('fa-moon');
+        icon.classList.add('fa-sun');
+      } else {
+        icon.classList.remove('fa-sun');
+        icon.classList.add('fa-moon');
+      }
+    });
+
+    // Toggle between vegan and non-vegan plans
+    document.getElementById('btn-vegan').addEventListener('click', function() {
+      this.classList.add('active');
+      document.getElementById('btn-nonvegan').classList.remove('active');
+      document.getElementById('vegan-plan').style.display = 'block';
+      document.getElementById('nonvegan-plan').style.display = 'none';
+    });
+
+    document.getElementById('btn-nonvegan').addEventListener('click', function() {
+      this.classList.add('active');
+      document.getElementById('btn-vegan').classList.remove('active');
+      document.getElementById('vegan-plan').style.display = 'none';
+      document.getElementById('nonvegan-plan').style.display = 'block';
+    });
+  </script>
+</body>
+</html>

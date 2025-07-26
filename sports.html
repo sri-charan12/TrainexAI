@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sports Recommendations | TrainexAI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    /* Base styles same as previous files */
+    :root {
+      --accent-color: #ff5c9e;
+      --accent-secondary: #6a4bcf;
+      --bg-dark: #0c0c0c;
+      --bg-darker: #121212;
+      --bg-widget: #1c1c1c;
+      --text-light: #eee;
+      --text-muted: #bbb;
+      --shadow-color: rgba(255, 92, 158, 0.25);
+      --btn-bg-hover: rgba(255, 92, 158, 0.2);
+      --btn-focus-shadow: 0 0 6px var(--accent-color);
+      --transition-speed: 0.3s;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-light);
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      display: flex;
+      min-height: 100vh;
+      flex-direction: column;
+    }
+
+    /* Navigation, Sidebar, Footer styles same as previous files */
+    /* ... */
+
+    /* Main content */
+    main {
+      flex: 1;
+      padding: 3rem 3rem 2rem 2.5rem;
+      overflow-y: auto;
+      background: var(--bg-darker);
+      margin-top: 56px;
+      margin-left: 250px;
+    }
+    h1 {
+      font-size: 2.8rem;
+      background: linear-gradient(135deg, var(--accent-secondary), var(--accent-color));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 2.4rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    .welcome-icon {
+      font-size: 2.5rem;
+    }
+
+    /* Sports Recommendations Specific Styles */
+    .recommendation-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .day-selector {
+      display: flex;
+      background: var(--bg-widget);
+      padding: 0.5rem;
+      border-radius: 50px;
+    }
+    .day-btn {
+      padding: 0.8rem 1.5rem;
+      border: none;
+      background: transparent;
+      color: var(--text-light);
+      font-weight: 500;
+      cursor: pointer;
+      border-radius: 50px;
+      transition: all var(--transition-speed) ease;
+    }
+    .day-btn.active {
+      background: var(--accent-color);
+      color: white;
+      box-shadow: 0 4px 12px var(--shadow-color);
+    }
+    .day-btn:hover:not(.active) {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .sport-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .sport-card {
+      background: var(--bg-widget);
+      border-radius: 16px;
+      padding: 1.5rem;
+      transition: all var(--transition-speed) ease;
+      border-left: 3px solid var(--accent-color);
+      box-shadow: 0 8px 24px var(--shadow-color);
+      position: relative;
+    }
+    .sport-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 28px var(--shadow-color);
+    }
+    .sport-card h3 {
+      color: var(--text-light);
+      margin-bottom: 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .sport-card p {
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+      font-size: 0.95rem;
+    }
+    .sport-stats {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+    .stat-item {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+    .stat-item span {
+      color: var(--accent-color);
+      font-weight: 600;
+    }
+    .sport-actions {
+      display: flex;
+      gap: 0.8rem;
+    }
+    .sport-actions button {
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all var(--transition-speed) ease;
+    }
+    .primary-btn {
+      background: var(--accent-color);
+      color: white;
+    }
+    .secondary-btn {
+      background: transparent;
+      color: var(--text-light);
+      border: 1px solid var(--accent-color) !important;
+    }
+    .sport-actions button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px var(--shadow-color);
+    }
+    .sport-badge {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: var(--accent-secondary);
+      color: white;
+      padding: 0.3rem 0.6rem;
+      border-radius: 50px;
+      font-size: 0.7rem;
+      font-weight: 600;
+    }
+
+    .workout-compatibility {
+      background: var(--bg-widget);
+      border-radius: 20px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 12px 38px var(--shadow-color);
+    }
+    .workout-compatibility h2 {
+      color: var(--accent-color);
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .compatibility-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1.5rem;
+    }
+    .compatibility-item {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      padding: 1.2rem;
+      text-align: center;
+    }
+    .compatibility-item h3 {
+      color: var(--text-light);
+      margin-bottom: 0.5rem;
+      font-size: 1rem;
+    }
+    .compatibility-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--accent-secondary), var(--accent-color));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .compatibility-desc {
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      margin-top: 0.5rem;
+    }
+
+    /* Responsive Design same as previous files */
+    /* ... */
+  </style>
+</head>
+<body>
+  <!-- Navigation Bar same as previous files -->
+  <!-- Sidebar same as previous files -->
+
+  <!-- Main content -->
+  <main>
+    <h1><i class="fas fa-running welcome-icon"></i> Sports Recommendations</h1>
+
+    <div class="recommendation-header">
+      <h2>Today's Recommended Activities</h2>
+      <div class="day-selector">
+        <button class="day-btn active" data-day="today">Today</button>
+        <button class="day-btn" data-day="tomorrow">Tomorrow</button>
+        <button class="day-btn" data-day="week">This Week</button>
+      </div>
+    </div>
+
+    <div class="sport-cards">
+      <div class="sport-card">
+        <span class="sport-badge">Best Match</span>
+        <h3><i class="fas fa-swimming-pool"></i> Swimming</h3>
+        <p>Low-impact full-body workout that complements your upper body focus today</p>
+        <div class="sport-stats">
+          <div class="stat-item"><span>45</span> min</div>
+          <div class="stat-item"><span>500</span> kcal</div>
+          <div class="stat-item"><span>Low</span> impact</div>
+        </div>
+        <div class="sport-actions">
+          <button class="primary-btn">Start Session</button>
+          <button class="secondary-btn">Learn More</button>
+        </div>
+      </div>
+      <div class="sport-card">
+        <h3><i class="fas fa-biking"></i> Cycling</h3>
+        <p>Great for active recovery and cardiovascular health</p>
+        <div class="sport-stats">
+          <div class="stat-item"><span>30-60</span> min</div>
+          <div class="stat-item"><span>400-800</span> kcal</div>
+          <div class="stat-item"><span>Moderate</span> intensity</div>
+        </div>
+        <div class="sport-actions">
+          <button class="primary-btn">Start Session</button>
+          <button class="secondary-btn">Learn More</button>
+        </div>
+      </div>
+      <div class="sport-card">
+        <h3><i class="fas fa-table-tennis"></i> Table Tennis</h3>
+        <p>Improves reflexes and coordination while being fun</p>
+        <div class="sport-stats">
+          <div class="stat-item"><span>30-45</span> min</div>
+          <div class="stat-item"><span>200-400</span> kcal</div>
+          <div class="stat-item"><span>Low</span> impact</div>
+        </div>
+        <div class="sport-actions">
+          <button class="primary-btn">Start Session</button>
+          <button class="secondary-btn">Learn More</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="workout-compatibility">
+      <h2><i class="fas fa-chart-line"></i> Compatibility With Today's Workout</h2>
+      <div class="compatibility-grid">
+        <div class="compatibility-item">
+          <h3>Muscle Recovery</h3>
+          <div class="compatibility-value">92%</div>
+          <div class="compatibility-desc">Excellent for recovery</div>
+        </div>
+        <div class="compatibility-item">
+          <h3>Calorie Burn</h3>
+          <div class="compatibility-value">85%</div>
+          <div class="compatibility-desc">High energy expenditure</div>
+        </div>
+        <div class="compatibility-item">
+          <h3>Skill Development</h3>
+          <div class="compatibility-value">78%</div>
+          <div class="compatibility-desc">Good for coordination</div>
+        </div>
+        <div class="compatibility-item">
+          <h3>Enjoyment Factor</h3>
+          <div class="compatibility-value">95%</div>
+          <div class="compatibility-desc">Highly enjoyable</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sport-cards">
+      <div class="sport-card">
+        <h3><i class="fas fa-basketball-ball"></i> Basketball</h3>
+        <p>Team sport that improves agility and cardiovascular health</p>
+        <div class="sport-stats">
+          <div class="stat-item"><span>60</span> min</div>
+          <div class="stat-item"><span>600-900</span> kcal</div>
+          <div class="stat-item"><span>High</span> intensity</div>
+        </div>
+        <div class="sport-actions">
+          <button class="primary-btn">Start Session</button>
+          <button class="secondary-btn">Learn More</button>
+        </div>
+      </div>
+      <div class="sport-card">
+        <h3><i class="fas fa-golf-ball"></i> Golf</h3>
+        <p>Low-intensity sport good for mobility and focus</p>
+        <div class="sport-stats">
+          <div class="stat-item"><span>90-120</span> min</div>
+          <div class="stat-item"><span>400-600</span> kcal</div>
+          <div class="stat-item"><span>Low</span> intensity</div>
+        </div>
+        <div class="sport-actions">
+          <button class="primary-btn">Start Session</button>
+          <button class="secondary-btn">Learn More</button>
+        </div>
+      </div>
+      <div class="sport-card">
+        <h3><i class="fas fa-volleyball-ball"></i> Volleyball</h3>
+        <p>Great for teamwork and explosive power</p>
+        <div class="sport-stats">
+          <div class="stat-item"><span>60</span> min</div>
+          <div class="stat-item"><span>400-700</span> kcal</div>
+          <div class="stat-item"><span>Moderate</span> intensity</div>
+        </div>
+        <div class="sport-actions">
+          <button class="primary-btn">Start Session</button>
+          <button class="secondary-btn">Learn More</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer same as previous files -->
+  </main>
+
+  <script>
+    // Toggle sidebar on mobile
+    document.querySelector('.menu-toggle').addEventListener('click', function() {
+      document.querySelector('aside').classList.toggle('active');
+    });
+
+    // Simple theme toggle example
+    document.querySelector('.theme-toggle').addEventListener('click', function() {
+      document.body.classList.toggle('light-theme');
+      const icon = this.querySelector('i');
+      if (document.body.classList.contains('light-theme')) {
+        icon.classList.remove('fa-moon');
+        icon.classList.add('fa-sun');
+      } else {
+        icon.classList.remove('fa-sun');
+        icon.classList.add('fa-moon');
+      }
+    });
+
+    // Day selector functionality
+    document.querySelectorAll('.day-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        document.querySelector('.day-btn.active').classList.remove('active');
+        this.classList.add('active');
+        
+        // In a real app, this would fetch different recommendations based on the day
+        console.log('Showing recommendations for:', this.dataset.day);
+      });
+    });
+
+    // Simulate AI recommendation based on workout schedule
+    function updateRecommendations() {
+      // In a real app, this would analyze the user's workout schedule
+      // and adjust recommendations accordingly
+      const today = new Date().getDay();
+      let focusArea = '';
+      
+      switch(today) {
+        case 1: // Monday
+          focusArea = 'Chest & Triceps';
+          break;
+        case 2: // Tuesday
+          focusArea = 'Back & Biceps';
+          break;
+        case 3: // Wednesday
+          focusArea = 'Legs';
+          break;
+        case 5: // Friday
+          focusArea = 'Shoulders & Abs';
+          break;
+        default:
+          focusArea = 'Recovery';
+      }
+      
+      document.querySelector('.recommendation-header h2').textContent = 
+        `Today's Recommended Activities (${focusArea} Day)`;
+    }
+    
+    updateRecommendations();
+  </script>
+</body>
+</html>
+<footer>
+  <div class="footer-content">
+    <div class="footer-links">
+      <h3>About Us</h3>
+      <ul>
+        <li><a href="index.html#about">Our Story</a></li>
+        <li><a href="index.html#founders">Our Team</a></li>
+      </ul>
+    </div>
+    <div class="footer-links">
+      <h3>Help & Support</h3>
+      <ul>
+        <li><a href="settings.html">Contact Us</a></li>
+        <li><a href="terms.html">Terms & Conditions</a></li>
+      </ul>
+    </div>
+    <div class="footer-links">
+      <h3>Follow Us</h3>
+      <ul>
+        <li><a href="https://www.facebook.com/share/p/12EZbqKwPMY/">Facebook</a></li>
+        <li><a href="http://www.linkedin.com/in/trainx-ai-949624367">Linked in</a></li>
+        <li><a href="https://www.instagram.com/trainxai?igsh=NjkxYXZveXBkamM5">Instagram</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-copyright">
+    <p>&copy; 2025 TrainexAI. All rights reserved.</p>
+  </div>
+</footer>
+
+<style>
+  footer {
+    background: rgba(15, 15, 15, 0.95);
+    color: #eee;
+    text-align: center;
+    padding: 1.8rem 1rem;
+    font-size: 0.9rem;
+    box-shadow: 0 -2px 12px rgba(255, 92, 158, 0.45);
+    margin-top: 3rem;
+    user-select: none;
+  }
+
+  .footer-content {
+    display: flex;
+    justify-content: space-between;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .footer-links {
+    margin: 20px;
+    text-align: left;
+  }
+
+  .footer-links h3 {
+    margin-bottom: 10px;
+    color: #ff5c9e;
+    text-shadow: 0 0 8px rgba(255, 92, 158, 0.5);
+  }
+
+  .footer-links ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .footer-links li {
+    margin-bottom: 10px;
+  }
+
+  .footer-links a {
+    color: #ddd;
+    text-decoration: none;
+    transition: color 0.3s ease, text-shadow 0.3s ease;
+  }
+
+  .footer-links a:hover {
+    color: #ff5c9e;
+    text-shadow: 0 0 6px #ff5c9e;
+  }
+
+  .footer-copyright {
+    margin-top: 20px;
+    font-size: 14px;
+    color: #aaa;
+  }
+
+  @media (max-width: 768px) {
+    .footer-content {
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    .footer-links {
+      text-align: center;
+      margin: 15px 0;
+    }
+  }
+</style>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TrainexAI Header</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --accent-color: #ff5c9e;
+      --text-light: #eee;
+      --shadow-color: rgba(255, 92, 158, 0.45);
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #000;
+      color: var(--text-light);
+    }
+    
+    nav {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      background: rgba(20, 20, 20, 0.9);
+      backdrop-filter: blur(12px);
+      box-shadow: 0 2px 12px var(--shadow-color);
+      z-index: 1000;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.85rem 2rem;
+    }
+     nav ul {
+      list-style: none;
+      display: flex;
+      gap: 1.8rem;
+      align-items: center;
+    }
+    
+    nav ul li a,
+    nav ul li button {
+      color: var(--text-light);
+      font-weight: 500;
+      text-decoration: none;
+      padding: 0.55rem 1rem;
+      border-radius: 7px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-size: 1.05rem;
+      transition: color 0.3s ease, background 0.3s ease, text-shadow 0.3s ease;
+    }
+    
+    nav ul li a:hover,
+    nav ul li a:focus,
+    nav ul li button:hover,
+    nav ul li button:focus {
+      color: var(--accent-color);
+      background: rgba(255, 92, 158, 0.2);
+      outline: none;
+      text-shadow: 0 0 6px var(--accent-color);
+    }
+    
+   .logo-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.logo {
+  height: 42px;
+  width: auto;
+  transition: transform 0.3s ease, filter 0.3s ease;
+  filter: drop-shadow(0 0 6px var(--accent-color));
+}
+
+.logo:hover {
+  transform: scale(1.08);
+  filter: drop-shadow(0 0 10px var(--accent-color));
+}
+
+.logo-text {
+  font-weight: 700;
+  font-size: 1.7rem;
+  color: var(--accent-color);
+  letter-spacing: 2px;
+  text-shadow: 0 0 8px var(--accent-color);
+  transition: text-shadow 0.3s ease;
+}
+
+.logo-container:hover .logo-text {
+  text-shadow: 0 0 12px var(--accent-color);
+}
+    
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      cursor: pointer;
+    }
+    
+    .user-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--accent-color);
+      transition: transform 0.3s ease;
+    }
+    
+    .user-avatar:hover {
+      transform: scale(1.1);
+    }
+    
+    .user-name {
+      font-weight: 500;
+      font-size: 0.95rem;
+    }
+    
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      cursor: pointer;
+    }
+    
+    .hamburger span {
+      width: 26px;
+      height: 3px;
+      background: var(--accent-color);
+      margin: 5px 0;
+      border-radius: 3px;
+      transition: 0.3s;
+      filter: drop-shadow(0 0 3px var(--accent-color));
+    }
+    
+    /* Modal styles */
+    .modal-bg {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 15, 25, 0.97);
+      backdrop-filter: blur(10px);
+      z-index: 1600;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .modal-bg.active {
+      display: flex;
+    }
+    
+    .modal {
+      background: #141422;
+      border-radius: 20px;
+      padding: 2.5rem 2.7rem;
+      max-width: 440px;
+      width: 90vw;
+      box-shadow: 0 10px 40px var(--shadow-color);
+      animation: modalFadeIn 0.46s ease forwards;
+      color: var(--text-light);
+      position: relative;
+      font-size: 1rem;
+    }
+    
+    @keyframes modalFadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-35px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .modal h3 {
+      margin-bottom: 1.8rem;
+      font-size: 2.1rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #6a4bcf, #ff5c9e);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 15px var(--accent-color);
+    }
+    
+    .modal label {
+      font-weight: 700;
+      display: block;
+      margin-top: 1.2rem;
+      letter-spacing: 0.02em;
+      color: #eee;
+    }
+    
+    .modal input[type="text"],
+    .modal input[type="password"],
+    .modal input[type="email"] {
+      width: 100%;
+      padding: 0.82rem;
+      margin-top: 7px;
+      border-radius: 10px;
+      border: none;
+      font-family: 'Poppins', sans-serif;
+      font-size: 1rem;
+      background: #22222f;
+      color: #eee;
+      box-shadow: inset 0 0 8px #111;
+      transition: box-shadow 0.3s ease;
+    }
+    
+    .modal input[type="text"]:focus,
+    .modal input[type="password"]:focus,
+    .modal input[type="email"]:focus {
+      outline: none;
+      box-shadow: 0 0 10px var(--accent-color);
+      background: #29293e;
+    }
+    
+    .modal .submit-btn {
+      margin-top: 2rem;
+      background: var(--accent-color);
+      border: none;
+      padding: 0.95rem 1.8rem;
+      font-size: 1.2rem;
+      font-weight: 700;
+      border-radius: 9999px;
+      cursor: pointer;
+      box-shadow: 0 8px 30px var(--shadow-color);
+      transition: background-color 0.35s ease;
+      width: 100%;
+    }
+    
+    .modal .submit-btn:hover {
+      background: #ff2f80;
+    }
+    
+    .modal button.close-btn {
+      position: absolute;
+      top: 1rem;
+      right: 1.3rem;
+      background: transparent;
+      border: none;
+      font-size: 2.4rem;
+      color: var(--accent-color);
+      cursor: pointer;
+      filter: drop-shadow(0 0 7px var(--accent-color));
+      transition: color 0.3s ease;
+    }
+    
+    .modal button.close-btn:hover {
+      color: #ff3e9f;
+    }
+    
+    .auth-buttons {
+      display: flex;
+      gap: 1rem;
+    }
+    
+    @media only screen and (max-width: 900px) {
+      nav ul {
+        position: fixed;
+        top: 65px;
+        right: -100%;
+        background: rgba(20,20,20,0.97);
+        height: calc(100vh - 65px);
+        width: 220px;
+        flex-direction: column;
+        padding: 1.5rem;
+        gap: 1.5rem;
+        box-shadow: -3px 0 12px var(--shadow-color);
+        transition: right 0.35s ease;
+        border-radius: 0 0 0 15px;
+        z-index: 9999;
+      }
+      
+      nav ul.active {
+        right: 0;
+      }
+      
+      .hamburger {
+        display: flex;
+      }
+      
+      .auth-buttons {
+        flex-direction: column;
+        width: 100%;
+      }
+      
+      .auth-buttons button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+   <div class="logo-container" tabindex="0">
+    <img src="logo.jpg" alt="TrainexAI Logo" class="logo">
+    <span class="logo-text">TrainexAI</span>
+  </div>
+    <ul id="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="index.html#abput">Features</a></li>
+      <li><a href="index.html#pricing">Pricing</a></li>
+      
+      <!-- Conditional rendering based on auth state -->
+      <li id="auth-section">
+        <!-- When logged out -->
+        <div id="logged-out" class="auth-buttons">
+          <button id="btn-signin">Sign In</button>
+          <button id="btn-signup">Sign Up</button>
+        </div>
+        
+        <!-- When logged in -->
+        <div id="logged-in" style="display: none;" class="user-profile">
+          <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="User profile" class="user-avatar">
+          <span class="user-name">John Doe</span>
+        </div>
+      </li>
+    </ul>
+    <div class="hamburger">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  </nav>
+
+  <!-- Sign In Modal -->
+  <div id="modal-signin" class="modal-bg">
+    <div class="modal">
+      <button class="close-btn">&times;</button>
+      <h3>Sign In</h3>
+      <form id="signin-form">
+        <label for="signin-email">Email</label>
+        <input type="email" id="signin-email" name="email" required placeholder="you@example.com">
+        
+        <label for="signin-password">Password</label>
+        <input type="password" id="signin-password" name="password" required placeholder="Your password">
+        
+        <button type="submit" class="submit-btn">Sign In</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Sign Up Modal -->
+  <div id="modal-signup" class="modal-bg">
+    <div class="modal">
+      <button class="close-btn">&times;</button>
+      <h3>Sign Up</h3>
+      <form id="signup-form">
+        <label for="signup-name">Full Name</label>
+        <input type="text" id="signup-name" name="name" required placeholder="Your full name">
+        
+        <label for="signup-email">Email</label>
+        <input type="email" id="signup-email" name="email" required placeholder="you@example.com">
+        
+        <label for="signup-password">Password</label>
+        <input type="password" id="signup-password" name="password" required placeholder="Create a password">
+        
+        <label for="signup-confirm">Confirm Password</label>
+        <input type="password" id="signup-confirm" name="passwordConfirm" required placeholder="Confirm password">
+        
+        <button type="submit" class="submit-btn">Create Account</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // DOM Elements
+    const hamburger = document.querySelector('.hamburger');
+    const navLinks = document.getElementById('nav-links');
+    const signInBtn = document.getElementById('btn-signin');
+    const signUpBtn = document.getElementById('btn-signup');
+    const modalSignIn = document.getElementById('modal-signin');
+    const modalSignUp = document.getElementById('modal-signup');
+    const loggedOutSection = document.getElementById('logged-out');
+    const loggedInSection = document.getElementById('logged-in');
+    const signinForm = document.getElementById('signin-form');
+    const signupForm = document.getElementById('signup-form');
+
+    // Toggle mobile menu
+    hamburger.addEventListener('click', () => {
+      navLinks.classList.toggle('active');
+      hamburger.classList.toggle('active');
+    });
+
+    // Modal functions
+    function openModal(modal) {
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal(modal) {
+      modal.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    // Event listeners for modals
+    signInBtn.addEventListener('click', () => openModal(modalSignIn));
+    signUpBtn.addEventListener('click', () => openModal(modalSignUp));
+
+    document.querySelectorAll('.modal .close-btn').forEach(btn => {
+      btn.addEventListener('click', () => closeModal(btn.closest('.modal-bg')));
+    });
+
+    window.addEventListener('click', (e) => {
+      if (e.target === modalSignIn) closeModal(modalSignIn);
+      if (e.target === modalSignUp) closeModal(modalSignUp);
+    });
+
+    // Form submission handlers
+    signinForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const email = signinForm.email.value;
+      const password = signinForm.password.value;
+      
+      // Simulate authentication
+      console.log('Signing in with:', email, password);
+      
+      // For demo purposes - assume login is successful
+      loggedOutSection.style.display = 'none';
+      loggedInSection.style.display = 'flex';
+      closeModal(modalSignIn);
+      signinForm.reset();
+      
+      alert('Successfully signed in!');
+    });
+
+    signupForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = signupForm.name.value;
+      const email = signupForm.email.value;
+      const password = signupForm.password.value;
+      const confirmPassword = signupForm.passwordConfirm.value;
+      
+      if (password !== confirmPassword) {
+        alert('Passwords do not match!');
+        return;
+      }
+      
+      // Simulate registration
+      console.log('Registering:', name, email, password);
+      
+      // For demo purposes - assume registration is successful
+      loggedOutSection.style.display = 'none';
+      loggedInSection.style.display = 'flex';
+      document.querySelector('.user-name').textContent = name;
+      closeModal(modalSignUp);
+      signupForm.reset();
+      
+      alert('Account created successfully! You are now signed in.');
+    });
+
+    // Logout functionality (click on profile)
+    loggedInSection.addEventListener('click', () => {
+      if (confirm('Are you sure you want to sign out?')) {
+        loggedOutSection.style.display = 'flex';
+        loggedInSection.style.display = 'none';
+        alert('You have been signed out.');
+      }
+    });
+  </script>
+</body>
+</html>

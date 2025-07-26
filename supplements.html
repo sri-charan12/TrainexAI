@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gym Supplements Guide</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+        :root {
+            --blue-pink-gradient: linear-gradient(135deg, #5f72be, #ffc2d1);
+            --blue-pink-gradient-alt: linear-gradient(135deg, #6a4bcf, #ff5c9e);
+            --background-dark: #000;
+            --text-light: #eee;
+            --accent-color: #ff5c9e;
+            --shadow-color: rgba(255, 92, 158, 0.45);
+            --background-light: #1a1a1a; /* Dark background for the main content */
+            --card-background: rgba(20, 20, 20, 0.8); /* Card background */
+            --text-dark: #ddd; /* Light text for cards */
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--background-dark);
+            color: var(--text-light);
+            overflow-x: hidden;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Navigation Bar */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(20, 20, 20, 0.9);
+            backdrop-filter: blur(12px);
+            box-shadow: 0 2px 12px var(--shadow-color);
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.85rem 2rem;
+        }
+        
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.logo {
+  height: 42px;
+  width: auto;
+  transition: transform 0.3s ease, filter 0.3s ease;
+  filter: drop-shadow(0 0 6px var(--accent-color));
+}
+
+.logo:hover {
+  transform: scale(1.08);
+  filter: drop-shadow(0 0 10px var(--accent-color));
+}
+
+.logo-text {
+  font-weight: 700;
+  font-size: 1.7rem;
+  color: var(--accent-color);
+  letter-spacing: 2px;
+  text-shadow: 0 0 8px var(--accent-color);
+  transition: text-shadow 0.3s ease;
+}
+
+.logo-container:hover .logo-text {
+  text-shadow: 0 0 12px var(--accent-color);
+}
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 1.8rem;
+        }
+
+        nav ul li a,
+        nav ul li button {
+            color: var(--text-light);
+            font-weight: 500;
+            text-decoration: none;
+            padding: 0.55rem 1rem;
+            border-radius: 7px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 1.05rem;
+            transition: color 0.3s ease, background 0.3s ease, text-shadow 0.3s ease;
+        }
+
+        nav ul li a:hover,
+        nav ul li a:focus,
+        nav ul li button:hover,
+        nav ul li button:focus {
+            color: var(--accent-color);
+            background: rgba(255, 92, 158, 0.2);
+            outline: none;
+            text-shadow: 0 0 6px var(--accent-color);
+        }
+
+        footer {
+            background: rgba(15, 15, 15, 0.95);
+            color: var(--text-light);
+            text-align: center;
+            padding: 1.8rem 1rem;
+            font-size: 0.9rem;
+            box-shadow: 0 -2px 12px var(--shadow-color);
+            margin-top: 3rem;
+            user-select: none;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 80px 20px 20px; /* Added padding for top space */
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--text-light);
+            margin-bottom: 30px;
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        .supplements-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+        }
+
+        .supplement-card {
+            background: var(--card-background);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            opacity: 0; /* Start hidden for animation */
+            animation: fadeIn 0.5s ease forwards; /* Fade in animation */
+            animation-delay: 0.1s; /* Delay for staggered effect */
+        }
+
+        .supplement-card:hover {
+            transform: scale(1.05); /* Scale up on hover */
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3); /* Increase shadow on hover */
+        }
+
+        .supplement-image {
+            width: 100%;
+            height: 200px; /* Fixed height for uniformity */
+            object-fit: cover;
+            border-bottom: 1px solid #eee;
+            transition: transform 0.3s ease;
+        }
+
+        .supplement-image:hover {
+            transform: scale(1.1); /* Scale image on hover */
+        }
+
+        .supplement-info {
+            padding: 15px;
+        }
+
+        .supplement-name {
+            font-size: 1.3rem;
+            margin: 0 0 10px 0;
+            color: var(--text-light);
+        }
+
+        .supplement-usage {
+            color: var(--text-dark);
+            margin: 10px 0;
+        }
+
+        .usage-title {
+            font-weight: bold;
+            color: #e74c3c;
+            margin-bottom: 5px;
+        }
+
+        .category-filter {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .category-btn {
+            padding: 8px 15px;
+            margin: 0 5px;
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.3s; /* Added transform transition */
+        }
+
+        .category-btn:hover {
+            background: #e74c3c; /* Change to a darker shade on hover */
+            transform: scale(1.05); /* Scale up on hover */
+        }
+
+        .category-btn.active {
+            background: #e74c3c;
+        }
+footer {
+  background-color: #333;
+  color: #fff;
+  padding: 20px;
+  text-align: center;
+}
+
+.footer-content {
+  display: flex;
+  justify-content: space-between;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.footer-links {
+  margin: 20px;
+}
+
+.footer-links h3 {
+  margin-bottom: 10px;
+}
+
+.footer-links ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-links li {
+  margin-bottom: 10px;
+}
+
+.footer-links a {
+  color: #fff;
+  text-decoration: none;
+}
+
+.footer-links a:hover {
+  color: #ccc;
+}
+
+.footer-copyright {
+  margin-top: 20px;
+  font-size: 14px;
+}
+        @media (max-width: 768px) {
+            .supplements-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav>
+        <div class="logo-container" tabindex="0">
+    <img src="logo.jpg" alt="TrainexAI Logo" class="logo">
+    <span class="logo-text">TrainexAI</span>
+  </div>
+        <ul id="nav-links" aria-label="Primary navigation">
+            <li><a href="index.html" tabindex="0">Home</a></li>
+            <li><a href="index.html#about" tabindex="0">About</a></li>
+            <li><button id="btn-signin" aria-label="Sign in to your account">Sign In</button></li>
+            <li><button id="btn-signup" aria-label="Create a new account">Sign Up</button></li>
+            <li><a href="index.html#pricing" tabindex="0">Pricing</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <h1>Gym Supplements Guide</h1>
+        
+        <div class="category-filter">
+            <button class="category-btn active" data-category="all">All</button>
+            <button class="category-btn" data-category="protein">Proteins</button>
+            <button class="category-btn" data-category="amino">Amino Acids</button>
+            <button class="category-btn" data-category="preworkout">Pre-Workout</button>
+            <button class="category-btn" data-category="recovery">Recovery</button>
+            <button class="category-btn" data-category="other">Other</button>
+        </div>
+        
+        <div class="supplements-grid" id="supplementsContainer">
+            <!-- Supplement 1 -->
+            <div class="supplement-card" data-category="protein">
+                <img src="whey protein.jpg" class="supplement-image" alt="Whey Protein">
+                <div class="supplement-info">
+                    <h3 class="supplement-name">Whey Protein</h3>
+                    <div class="supplement-usage">
+                        <div class="usage-title">Usage:</div>
+                        <p>Mix 1 scoop (30g) with water or milk post-workout or between meals. Provides 20-25g of fast-digesting protein to support muscle recovery and growth.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Supplement 2 -->
+            <div class="supplement-card" data-category="protein">
+                <img src="Casein_Protein.jpg" class="supplement-image" alt="Casein Protein">
+                <div class="supplement-info">
+                    <h3 class="supplement-name">Casein Protein</h3>
+                    <div class="supplement-usage">
+                        <div class="usage-title">Usage:</div>
+                        <p>Take 1 scoop (30g) before bedtime. Slow-digesting protein that provides amino acids over several hours to prevent muscle breakdown during sleep.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Supplement 3 -->
+            <div class="supplement-card" data-category="amino">
+                <img src="BCAAs (Branched-Chain Amino Acids).jpg" class="supplement-image" alt="BCAAs">
+                <div class="supplement-info">
+                    <h3 class="supplement-name">BCAAs (Branched-Chain Amino Acids)</h3>
+                    <div class="supplement-usage">
+                        <div class="usage-title">Usage:</div>
+                        <p>Take 5-10g during workout or between meals. Helps reduce muscle fatigue and promotes muscle protein synthesis during training.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Supplement 4 -->
+            <div class="supplement-card" data-category="amino">
+                <img src="L-Glutamine.jpg" class="supplement-image" alt="L-Glutamine">
+                <div class="supplement-info">
+                    <h3 class="supplement-name">L-Glutamine</h3>
+                    <div class="supplement-usage">
+                        <div class="usage-title">Usage:</div>
+                        <p>Take 5g post-workout and before bed. Supports immune function and helps with muscle recovery by reducing soreness.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Supplement 5 -->
+            <div class="supplement-card" data-category="preworkout">
+                <img src="Pre-Workout.jpg" class="supplement-image" alt="Pre-Workout">
+                <div class="supplement-info">
+                    <h3 class="supplement-name">Pre-Workout</h3>
+                    <div class="supplement-usage">
+                        <div class="usage-title">Usage:</div>
+                        <p>Take 1 scoop 20-30 minutes before training. Contains caffeine, beta-alanine, and other ingredients to boost energy, focus, and performance.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Supplement 6 -->
+            <div class="supplement-card" data-category="recovery">
+                <img src="Creatine Monohydrate.jpg" class="supplement-image" alt="Creatine Monohydrate">
+                <div class="supplement-info">
+                    <h3 class="supplement-name">Creatine Monohydrate</h3>
+                    <div class="supplement-usage">
+                        <div class="usage-title">Usage:</div>
+                        <p>Take 5g daily (loading phase: 20g/day for 5-7 days). Increases phosphocreatine stores in muscles, enhancing strength and power output.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Supplement 7 -->
+            <div class="supplement-card" data-category="other">
+                <img src="Multivitamin.jpg" class="supplement-image" alt="Multivitamin">
+                <div class="supplement-info">
+                    <h3 class="supplement-name">Multivitamin</h3>
+                    <div class="supplement-usage">
+                        <div class="usage-title">Usage:</div>
+                        <p>Take 1 tablet daily with a meal. Fills nutritional gaps in your diet and supports overall health and immune function.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Supplement 8 -->
+            <div class="supplement-card" data-category="other">
+                <img src="Omega-3 Fish Oil.jpg" class="supplement-image" alt="Omega-3 Fish Oil">
+                <div class="supplement-info">
+                    <h3 class="supplement-name">Omega-3 Fish Oil</h3>
+                    <div class="supplement-usage">
+                        <div class="usage-title">Usage:</div>
+                        <p>Take 1-2g daily with meals. Reduces inflammation, supports joint health, and may improve body composition.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Supplement 9 -->
+            <div class="supplement-card" data-category="recovery">
+                <img src="Beta-Alanine.jpeg" class="supplement-image" alt="Beta-Alanine">
+                <div class="supplement-info">
+                    <h3 class="supplement-name">Beta-Alanine</h3>
+                    <div class="supplement-usage">
+                        <div class="usage-title">Usage:</div>
+                        <p>Take 2-5g daily (can be split into smaller doses). Buffers acid in muscles, delaying fatigue during high-intensity exercise.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Supplement 10 -->
+            <div class="supplement-card" data-category="protein">
+                <img src="Plant-Based Protein.jpg" class="supplement-image" alt="Plant-Based Protein">
+                <div class="supplement-info">
+                    <h3 class="supplement-name">Plant-Based Protein</h3>
+                    <div class="supplement-usage">
+                        <div class="usage-title">Usage:</div>
+                        <p>Mix 1-2 scoops (25-50g) with water or plant milk. Vegan protein source from peas, rice, or hemp for muscle recovery.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Supplement 11 -->
+            <div class="supplement-card" data-category="amino">
+                <img src="L-Carnitine.jpg" alt="L-Carnitine" class="supplement-image">
+                <div class="supplement-info">
+                    <h3 class="supplement-name">L-Carnitine</h3>
+                    <div class="supplement-usage">
+                        <div class="usage-title">Usage:</div>
+                        <p>Take 1-3g before workouts. May enhance fat metabolism and improve exercise performance.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Supplement 12 -->
+            <div class="supplement-card" data-category="other">
+                <img src="Vitamin D3.jpg" alt="Vitamin D3" class="supplement-image">
+                <div class="supplement-info">
+                    <h3 class="supplement-name">Vitamin D3</h3>
+                    <div class="supplement-usage">
+                        <div class="usage-title">Usage:</div>
+                        <p>Take 2000-5000 IU daily. Supports bone health, immune function, and may enhance muscle strength.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Supplement 13 -->
+            <div class="supplement-card" data-category="recovery">
+                <img src="ZMA (Zinc Magnesium Aspartate).jpg" alt="ZMA" class="supplement-image">
+                <div class="supplement-info">
+                    <h3 class="supplement-name">ZMA (Zinc Magnesium Aspartate)</h3>
+                    <div class="supplement-usage">
+                        <div class="usage-title">Usage:</div>
+                        <p>Take before bedtime. Supports recovery, testosterone production, and sleep quality.</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Supplement 14 -->
+            <div class="supplement-card" data-category="preworkout">
+                <img src="Citrulline Malate.jpg" alt="Citrulline Malate" class="supplement-image">
+                <div class="supplement-info">
+                    <h3 class="supplement-name">Citrulline Malate</h3>
+                    <div class="supplement-usage">
+                        <div class="usage-title">Usage:</div>
+                        <p>Take 6-8g 30-60 minutes before workout. Increases nitric oxide production, enhancing blood flow and muscle pumps.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Supplement 15 -->
+            <div class="supplement-card" data-category="other">
+                <img src="Probiotics.jpg" alt="Probiotics" class="supplement-image">
+                <div class="supplement-info">
+                    <h3 class="supplement-name">Probiotics</h3>
+                    <div class="supplement-usage">
+                        <div class="usage-title">Usage:</div>
+                        <p>Take as directed (typically 1 capsule daily). Supports gut health and immune function, which can impact nutrient absorption.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Supplement 16 -->
+            <div class="supplement-card" data-category="protein">
+                <img src="Beef Protein Isolate.jpg" alt="Beef Protein" class="supplement-image">
+                <div class="supplement-info">
+                    <h3 class="supplement-name">Beef Protein Isolate</h3>
+                    <div class="supplement-usage">
+                        <div class="usage-title">Usage:</div>
+                        <p>Mix 1 scoop (30g) with water post-workout. Alternative protein source for those sensitive to dairy.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Supplement 17 -->
+            <div class="supplement-card" data-category="amino">
+                <img src="Taurine.jpg" alt="Taurine" class="supplement-image">
+                <div class="supplement-info">
+                    <h3 class="supplement-name">Taurine</h3>
+                    <div class="supplement-usage">
+                        <div class="usage-title">Usage:</div>
+                        <p>Take 1-3g pre-workout. May improve exercise performance and reduce muscle damage.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Supplement 18 -->
+            <div class="supplement-card" data-category="recovery">
+                <img src="Electrolytes.jpg" alt="Electrolytes" class="supplement-image">
+                <div class="supplement-info">
+                    <h3 class="supplement-name">Electrolytes</h3>
+                    <div class="supplement-usage">
+                        <div class="usage-title">Usage:</div>
+                        <p>Mix with water during/after intense workouts. Replenishes sodium, potassium, and other minerals lost through sweat.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Supplement 19 -->
+            <div class="supplement-card" data-category="other">
+                <img src="Ashwagandha.jpg" alt="Ashwagandha" class="supplement-image">
+                <div class="supplement-info">
+                    <h3 class="supplement-name">Ashwagandha</h3>
+                    <div class="supplement-usage">
+                        <div class="usage-title">Usage:</div>
+                        <p>Take 300-500mg daily. Adaptogen that may reduce stress and cortisol levels while supporting testosterone.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Supplement 20 -->
+            <div class="supplement-card" data-category="preworkout">
+                <img src="Caffeine Pills.jpg" alt="Caffeine Pills" class="supplement-image">
+                <div class="supplement-info">
+                    <h3 class="supplement-name">Caffeine Pills</h3>
+                    <div class="supplement-usage">
+                        <div class="usage-title">Usage:</div>
+                        <p>Take 100-200mg 30-60 minutes before workout. Enhances focus, energy, and fat burning.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Supplement 21 -->
+            <div class="supplement-card" data-category="protein">
+                <img src="Egg white protien.jpg" alt="Egg White Protein" class="supplement-image">
+                <div class="supplement-info">
+                    <h3 class="supplement-name">Egg White Protein</h3>
+                    <div class="supplement-usage">
+                        <div class="usage-title">Usage:</div>
+                        <p>Mix 1 scoop (30g) with water or milk. High-quality protein alternative for those avoiding dairy.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Supplement 22 -->
+            <div class="supplement-card" data-category="amino">
+                <img src="HMB (β-Hydroxy β-Methylbutyrate).jpg" alt="HMB" class="supplement-image">
+                <div class="supplement-info">
+                    <h3 class="supplement-name">HMB (β-Hydroxy β-Methylbutyrate)</h3>
+                    <div class="supplement-usage">
+                        <div class="usage-title">Usage:</div>
+                        <p>Take 3g daily (can be split). May help prevent muscle breakdown, especially during cutting phases.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Supplement 23 -->
+            <div class="supplement-card" data-category="recovery">
+                <img src="Curcumin-Front.jpg" alt="Curcumin" class="supplement-image">
+                <div class="supplement-info">
+                    <h3 class="supplement-name">Curcumin/Turmeric</h3>
+                    <div class="supplement-usage">
+                        <div class="usage-title">Usage:</div>
+                        <p>Take 500-1000mg daily. Powerful anti-inflammatory that may reduce muscle soreness and joint pain.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Supplement 24 -->
+            <div class="supplement-card" data-category="other">
+                <img src="Collagen Peptides.jpg" alt="Collagen" class="supplement-image">
+                <div class="supplement-info">
+                    <h3 class="supplement-name">Collagen Peptides</h3>
+                    <div class="supplement-usage">
+                        <div class="usage-title">Usage:</div>
+                        <p>Take 10-20g daily. Supports joint, tendon, and ligament health, especially important for heavy lifters.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Supplement 25 -->
+            <div class="supplement-card" data-category="preworkout">
+                <img src="Betaine (TMG).jpg" alt="Betaine" class="supplement-image">
+                <div class="supplement-info">
+                    <h3 class="supplement-name">Betaine (TMG)</h3>
+                    <div class="supplement-usage">
+                        <div class="usage-title">Usage:</div>
+                        <p>Take 1.25-2.5g pre-workout. May increase power output and endurance.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Supplement 26 -->
+            <div class="supplement-card" data-category="protein">
+                <img src="Mass Gainer.jpg" alt="Mass Gainer" class="supplement-image">
+                <div class="supplement-info">
+                    <h3 class="supplement-name">Mass Gainer</h3>
+                    <div class="supplement-usage">
+                        <div class="usage-title">Usage:</div>
+                        <p>Take 1-2 servings daily between meals. High-calorie blend of carbs and protein for weight gain.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Supplement 27 -->
+            <div class="supplement-card" data-category="amino">
+                <img src="L-Arginine.jpg" alt="Arginine" class="supplement-image">
+                <div class="supplement-info">
+                    <h3 class="supplement-name">L-Arginine</h3>
+                    <div class="supplement-usage">
+                        <div class="usage-title">Usage:</div>
+                        <p>Take 3-6g pre-workout. Precursor to nitric oxide, may improve blood flow and pumps.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Supplement 28 -->
+            <div class="supplement-card" data-category="recovery">
+                <img src="Tart Cherry Extract.jpg" alt="Tart Cherry" class="supplement-image">
+                <div class="supplement-info">
+                    <h3 class="supplement-name">Tart Cherry Extract</h3>
+                    <div class="supplement-usage">
+                        <div class="usage-title">Usage:</div>
+                        <p>Take 480mg daily. May reduce muscle soreness and improve recovery.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Supplement 29 -->
+            <div class="supplement-card" data-category="other">
+                <img src="Vitamin D3 + K2.jpg" alt="D3+K2" class="supplement-image">
+                <div class="supplement-info">
+                    <h3 class="supplement-name">Vitamin D3 + K2</h3>
+                    <div class="supplement-usage">
+                        <div class="usage-title">Usage:</div>
+                        <p>Take 2000-5000 IU D3 with 100-200mcg K2 daily. Supports bone health and calcium metabolism.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Supplement 30 -->
+            <div class="supplement-card" data-category="preworkout">
+                <img src="Glycerol.jpg" alt="Glycerol" class="supplement-image">
+                <div class="supplement-info">
+                    <h3 class="supplement-name">Glycerol</h3>
+                    <div class="supplement-usage">
+                        <div class="usage-title">Usage:</div>
+                        <p>Take 1g per 10kg body weight pre-workout. Hydrates muscles for enhanced pumps and performance.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<footer>
+  <div class="footer-content">
+    <div class="footer-links">
+      <h3>About Us</h3>
+      <ul>
+        <li><a href="index.html#about">Our Story</a></li>
+        <li><a href="index.html#founders">Our Team</a></li>
+
+      </ul>
+    </div>
+    <div class="footer-links">
+      <h3>Help & Support</h3>
+      <ul>
+        <li><a href="settings.html">Contact Us</a></li>
+        <li><a href="terms.html">Terms & Conditions</a></li>
+      </ul>
+    </div>
+    <div class="footer-links">
+      <h3>Follow Us</h3>
+      <ul>
+         <li><a href="https://www.facebook.com/share/p/12EZbqKwPMY/">Facebook</a></li>
+        <li><a href="http://www.linkedin.com/in/trainx-ai-949624367">Linked in</a></li>
+        <li><a href="https://www.instagram.com/trainxai?igsh=NjkxYXZveXBkamM5">Instagram</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-copyright">
+    <p>&copy; 2025 TrainexAI. All rights reserved.</p>
+  </div>
+</footer>
+    <script>
+        // Filter supplements by category
+        document.querySelectorAll('.category-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                // Update active button
+                document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                
+                const category = this.dataset.category;
+                const supplements = document.querySelectorAll('.supplement-card');
+                
+                supplements.forEach(supp => {
+                    if (category === 'all' || supp.dataset.category === category) {
+                        supp.style.display = 'block';
+                    } else {
+                        supp.style.display = 'none';
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
+
+
+<style>
+  footer {
+    background: rgba(15, 15, 15, 0.95);
+    color: #eee;
+    text-align: center;
+    padding: 1.8rem 1rem;
+    font-size: 0.9rem;
+    box-shadow: 0 -2px 12px rgba(255, 92, 158, 0.45);
+    margin-top: 3rem;
+    user-select: none;
+  }
+
+  .footer-content {
+    display: flex;
+    justify-content: space-between;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .footer-links {
+    margin: 20px;
+    text-align: left;
+  }
+
+  .footer-links h3 {
+    margin-bottom: 10px;
+    color: #ff5c9e;
+    text-shadow: 0 0 8px rgba(255, 92, 158, 0.5);
+  }
+
+  .footer-links ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .footer-links li {
+    margin-bottom: 10px;
+  }
+
+  .footer-links a {
+    color: #ddd;
+    text-decoration: none;
+    transition: color 0.3s ease, text-shadow 0.3s ease;
+  }
+
+  .footer-links a:hover {
+    color: #ff5c9e;
+    text-shadow: 0 0 6px #ff5c9e;
+  }
+
+  .footer-copyright {
+    margin-top: 20px;
+    font-size: 14px;
+    color: #aaa;
+  }
+
+  @media (max-width: 768px) {
+    .footer-content {
+      flex-direction: column;
+      align-items: cent;
+    }
+    
+    .footer-links {
+      text-align: center;
+      margin: 15px 0;
+    }
+  }
+</style>

@@ -1,0 +1,1323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Fitness Coach - TrainexAI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.11.0"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/pose-detection@0.0.6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --accent-color: #ff5c9e;
+      --secondary-color: #6a4bcf;
+      --text-light: #eee;
+      --text-dark: #111;
+      --bg-dark: #000;
+      --bg-light: #1a1a1a;
+      --shadow-color: rgba(255, 92, 158, 0.3);
+    }
+    
+    body {
+      background: var(--bg-dark);
+      color: var(--text-light);
+      font-family: 'Poppins', sans-serif;
+      padding: 2rem;
+      margin-top: 80px;
+    }
+    
+    h1 {
+      background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-size: 2.5rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+    
+    .video-container {
+      flex: 1;
+      min-width: 300px;
+    }
+    
+    .stats-container {
+      flex: 1;
+      min-width: 300px;
+    }
+    
+    video {
+      border-radius: 15px;
+      width: 100%;
+      max-width: 640px;
+      margin-bottom: 1rem;
+      background: var(--bg-light);
+      box-shadow: 0 4px 20px var(--shadow-color);
+    }
+    
+    canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: 15px;
+    }
+    
+    .video-wrapper {
+      position: relative;
+      display: inline-block;
+    }
+    
+    .status-card {
+      background: var(--bg-light);
+      padding: 1.5rem;
+      border-radius: 15px;
+      margin-bottom: 1rem;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+    
+    .status-title {
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--accent-color);
+    }
+    
+    .status-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    
+    .progress-container {
+      margin-top: 1rem;
+    }
+    
+    .progress-bar {
+      height: 10px;
+      background: #333;
+      border-radius: 5px;
+      overflow: hidden;
+      margin-top: 0.5rem;
+    }
+    
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--secondary-color), var(--accent-color));
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+    
+    .exercise-selector {
+      margin-bottom: 2rem;
+    }
+    
+    label {
+      display: block;
+      margin-top: 1rem;
+      font-weight: 600;
+      color: var(--text-light);
+    }
+    
+    select, input {
+      background: var(--bg-light);
+      color: var(--text-light);
+      padding: 0.8rem;
+      border: 1px solid #333;
+      border-radius: 10px;
+      width: 100%;
+      margin-top: 0.5rem;
+      font-family: 'Poppins', sans-serif;
+    }
+    
+    button {
+      background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
+      color: white;
+      border: none;
+      padding: 0.8rem 1.5rem;
+      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 1rem;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      font-family: 'Poppins', sans-serif;
+    }
+    
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px var(--shadow-color);
+    }
+    
+    .recommendations {
+      background: var(--bg-light);
+      padding: 1.5rem;
+      border-radius: 15px;
+      margin-top: 2rem;
+    }
+    
+    .recommendations h3 {
+      color: var(--accent-color);
+      margin-bottom: 1rem;
+    }
+    
+    .recommendation-item {
+      margin-bottom: 1rem;
+      padding: 0.8rem;
+      background: rgba(106, 75, 207, 0.1);
+      border-radius: 8px;
+      border-left: 3px solid var(--accent-color);
+    }
+    
+    .chart-container {
+      margin-top: 2rem;
+      background: var(--bg-light);
+      padding: 1.5rem;
+      border-radius: 15px;
+    }
+    
+    nav {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      background: rgba(20, 20, 20, 0.9);
+      backdrop-filter: blur(12px);
+      box-shadow: 0 2px 12px var(--shadow-color);
+      z-index: 1000;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.85rem 2rem;
+    }
+    
+    nav .logo {
+      font-weight: 700;
+      font-size: 1.7rem;
+      color: var(--accent-color);
+      cursor: pointer;
+      letter-spacing: 2px;
+      user-select: none;
+      text-shadow: 0 0 8px var(--accent-color);
+    }
+    
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 1.8rem;
+    }
+    
+    nav ul li a,
+    nav ul li button {
+      color: var(--text-light);
+      font-weight: 500;
+      text-decoration: none;
+      padding: 0.55rem 1rem;
+      border-radius: 7px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-size: 1.05rem;
+      transition: color 0.3s ease, background 0.3s ease, text-shadow 0.3s ease;
+    }
+    
+    nav ul li a:hover,
+    nav ul li a:focus,
+    nav ul li button:hover,
+    nav ul li button:focus {
+      color: var(--accent-color);
+      background: rgba(255, 92, 158, 0.2);
+      outline: none;
+      text-shadow: 0 0 6px var(--accent-color);
+    }
+    
+    footer {
+      background: rgba(15, 15, 15, 0.95);
+      color: #eee;
+      text-align: center;
+      padding: 1.8rem 1rem;
+      font-size: 0.9rem;
+      box-shadow: 0 -2px 12px rgba(255, 92, 158, 0.45);
+      margin-top: 3rem;
+      user-select: none;
+    }
+    
+    .footer-content {
+      display: flex;
+      justify-content: space-between;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    .footer-links {
+      margin: 20px;
+    }
+    
+    .footer-links h3 {
+      margin-bottom: 10px;
+    }
+    
+    .footer-links ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    
+    .footer-links li {
+      margin-bottom: 10px;
+    }
+    
+    .footer-links a {
+      color: #fff;
+      text-decoration: none;
+    }
+    
+    .footer-links a:hover {
+      color: #ccc;
+    }
+    
+    .footer-copyright {
+      margin-top: 20px;
+      font-size: 14px;
+    }
+    
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+      }
+      
+      nav ul {
+        gap: 0.8rem;
+      }
+      
+      .footer-content {
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation Bar -->
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TrainexAI Header</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --accent-color: #ff5c9e;
+      --text-light: #eee;
+      --shadow-color: rgba(255, 92, 158, 0.45);
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #000;
+      color: var(--text-light);
+    }
+    
+    nav {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      background: rgba(20, 20, 20, 0.9);
+      backdrop-filter: blur(12px);
+      box-shadow: 0 2px 12px var(--shadow-color);
+      z-index: 1000;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.85rem 2rem;
+    }
+    .logo-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.logo {
+  height: 42px;
+  width: auto;
+  transition: transform 0.3s ease, filter 0.3s ease;
+  filter: drop-shadow(0 0 6px var(--accent-color));
+}
+
+.logo:hover {
+  transform: scale(1.08);
+  filter: drop-shadow(0 0 10px var(--accent-color));
+}
+
+.logo-text {
+  font-weight: 700;
+  font-size: 1.7rem;
+  color: var(--accent-color);
+  letter-spacing: 2px;
+  text-shadow: 0 0 8px var(--accent-color);
+  transition: text-shadow 0.3s ease;
+}
+
+.logo-container:hover .logo-text {
+  text-shadow: 0 0 12px var(--accent-color);
+}
+    
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 1.8rem;
+      align-items: center;
+    }
+    
+    nav ul li a,
+    nav ul li button {
+      color: var(--text-light);
+      font-weight: 500;
+      text-decoration: none;
+      padding: 0.55rem 1rem;
+      border-radius: 7px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-size: 1.05rem;
+      transition: color 0.3s ease, background 0.3s ease, text-shadow 0.3s ease;
+    }
+    
+    nav ul li a:hover,
+    nav ul li a:focus,
+    nav ul li button:hover,
+    nav ul li button:focus {
+      color: var(--accent-color);
+      background: rgba(255, 92, 158, 0.2);
+      outline: none;
+      text-shadow: 0 0 6px var(--accent-color);
+    }
+    
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      cursor: pointer;
+    }
+    
+    .user-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--accent-color);
+      transition: transform 0.3s ease;
+    }
+    
+    .user-avatar:hover {
+      transform: scale(1.1);
+    }
+    
+    .user-name {
+      font-weight: 500;
+      font-size: 0.95rem;
+    }
+    
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      cursor: pointer;
+    }
+    
+    .hamburger span {
+      width: 26px;
+      height: 3px;
+      background: var(--accent-color);
+      margin: 5px 0;
+      border-radius: 3px;
+      transition: 0.3s;
+      filter: drop-shadow(0 0 3px var(--accent-color));
+    }
+    
+    /* Modal styles */
+    .modal-bg {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 15, 25, 0.97);
+      backdrop-filter: blur(10px);
+      z-index: 1600;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .modal-bg.active {
+      display: flex;
+    }
+    
+    .modal {
+      background: #141422;
+      border-radius: 20px;
+      padding: 2.5rem 2.7rem;
+      max-width: 440px;
+      width: 90vw;
+      box-shadow: 0 10px 40px var(--shadow-color);
+      animation: modalFadeIn 0.46s ease forwards;
+      color: var(--text-light);
+      position: relative;
+      font-size: 1rem;
+    }
+    
+    @keyframes modalFadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-35px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .modal h3 {
+      margin-bottom: 1.8rem;
+      font-size: 2.1rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #6a4bcf, #ff5c9e);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 15px var(--accent-color);
+    }
+    
+    .modal label {
+      font-weight: 700;
+      display: block;
+      margin-top: 1.2rem;
+      letter-spacing: 0.02em;
+      color: #eee;
+    }
+    
+    .modal input[type="text"],
+    .modal input[type="password"],
+    .modal input[type="email"] {
+      width: 100%;
+      padding: 0.82rem;
+      margin-top: 7px;
+      border-radius: 10px;
+      border: none;
+      font-family: 'Poppins', sans-serif;
+      font-size: 1rem;
+      background: #22222f;
+      color: #eee;
+      box-shadow: inset 0 0 8px #111;
+      transition: box-shadow 0.3s ease;
+    }
+    
+    .modal input[type="text"]:focus,
+    .modal input[type="password"]:focus,
+    .modal input[type="email"]:focus {
+      outline: none;
+      box-shadow: 0 0 10px var(--accent-color);
+      background: #29293e;
+    }
+    
+    .modal .submit-btn {
+      margin-top: 2rem;
+      background: var(--accent-color);
+      border: none;
+      padding: 0.95rem 1.8rem;
+      font-size: 1.2rem;
+      font-weight: 700;
+      border-radius: 9999px;
+      cursor: pointer;
+      box-shadow: 0 8px 30px var(--shadow-color);
+      transition: background-color 0.35s ease;
+      width: 100%;
+    }
+    
+    .modal .submit-btn:hover {
+      background: #ff2f80;
+    }
+    
+    .modal button.close-btn {
+      position: absolute;
+      top: 1rem;
+      right: 1.3rem;
+      background: transparent;
+      border: none;
+      font-size: 2.4rem;
+      color: var(--accent-color);
+      cursor: pointer;
+      filter: drop-shadow(0 0 7px var(--accent-color));
+      transition: color 0.3s ease;
+    }
+    
+    .modal button.close-btn:hover {
+      color: #ff3e9f;
+    }
+    
+    .auth-buttons {
+      display: flex;
+      gap: 1rem;
+    }
+    
+    @media only screen and (max-width: 900px) {
+      nav ul {
+        position: fixed;
+        top: 65px;
+        right: -100%;
+        background: rgba(20,20,20,0.97);
+        height: calc(100vh - 65px);
+        width: 220px;
+        flex-direction: column;
+        padding: 1.5rem;
+        gap: 1.5rem;
+        box-shadow: -3px 0 12px var(--shadow-color);
+        transition: right 0.35s ease;
+        border-radius: 0 0 0 15px;
+        z-index: 9999;
+      }
+      
+      nav ul.active {
+        right: 0;
+      }
+      
+      .hamburger {
+        display: flex;
+      }
+      
+      .auth-buttons {
+        flex-direction: column;
+        width: 100%;
+      }
+      
+      .auth-buttons button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="logo-container" tabindex="0">
+    <img src="logo.jpg" alt="TrainexAI Logo" class="logo">
+    <span class="logo-text">TrainexAI</span>
+  </div>
+    <ul id="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="index.html#about">Features</a></li>
+      <li><a href="index.html#pricing">Pricing</a></li>
+      
+      <!-- Conditional rendering based on auth state -->
+      <li id="auth-section">
+        <!-- When logged out -->
+        <div id="logged-out" class="auth-buttons">
+          <button id="btn-signin">Sign In</button>
+          <button id="btn-signup">Sign Up</button>
+        </div>
+        
+        <!-- When logged in -->
+        <div id="logged-in" style="display: none;" class="user-profile">
+          <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="User profile" class="user-avatar">
+          <span class="user-name">John Doe</span>
+        </div>
+      </li>
+    </ul>
+    <div class="hamburger">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  </nav>
+
+  <!-- Sign In Modal -->
+  <div id="modal-signin" class="modal-bg">
+    <div class="modal">
+      <button class="close-btn">&times;</button>
+      <h3>Sign In</h3>
+      <form id="signin-form">
+        <label for="signin-email">Email</label>
+        <input type="email" id="signin-email" name="email" required placeholder="you@example.com">
+        
+        <label for="signin-password">Password</label>
+        <input type="password" id="signin-password" name="password" required placeholder="Your password">
+        
+        <button type="submit" class="submit-btn">Sign In</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Sign Up Modal -->
+  <div id="modal-signup" class="modal-bg">
+    <div class="modal">
+      <button class="close-btn">&times;</button>
+      <h3>Sign Up</h3>
+      <form id="signup-form">
+        <label for="signup-name">Full Name</label>
+        <input type="text" id="signup-name" name="name" required placeholder="Your full name">
+        
+        <label for="signup-email">Email</label>
+        <input type="email" id="signup-email" name="email" required placeholder="you@example.com">
+        
+        <label for="signup-password">Password</label>
+        <input type="password" id="signup-password" name="password" required placeholder="Create a password">
+        
+        <label for="signup-confirm">Confirm Password</label>
+        <input type="password" id="signup-confirm" name="passwordConfirm" required placeholder="Confirm password">
+        
+        <button type="submit" class="submit-btn">Create Account</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // DOM Elements
+    const hamburger = document.querySelector('.hamburger');
+    const navLinks = document.getElementById('nav-links');
+    const signInBtn = document.getElementById('btn-signin');
+    const signUpBtn = document.getElementById('btn-signup');
+    const modalSignIn = document.getElementById('modal-signin');
+    const modalSignUp = document.getElementById('modal-signup');
+    const loggedOutSection = document.getElementById('logged-out');
+    const loggedInSection = document.getElementById('logged-in');
+    const signinForm = document.getElementById('signin-form');
+    const signupForm = document.getElementById('signup-form');
+
+    // Toggle mobile menu
+    hamburger.addEventListener('click', () => {
+      navLinks.classList.toggle('active');
+      hamburger.classList.toggle('active');
+    });
+
+    // Modal functions
+    function openModal(modal) {
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal(modal) {
+      modal.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    // Event listeners for modals
+    signInBtn.addEventListener('click', () => openModal(modalSignIn));
+    signUpBtn.addEventListener('click', () => openModal(modalSignUp));
+
+    document.querySelectorAll('.modal .close-btn').forEach(btn => {
+      btn.addEventListener('click', () => closeModal(btn.closest('.modal-bg')));
+    });
+
+    window.addEventListener('click', (e) => {
+      if (e.target === modalSignIn) closeModal(modalSignIn);
+      if (e.target === modalSignUp) closeModal(modalSignUp);
+    });
+
+    // Form submission handlers
+    signinForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const email = signinForm.email.value;
+      const password = signinForm.password.value;
+      
+      // Simulate authentication
+      console.log('Signing in with:', email, password);
+      
+      // For demo purposes - assume login is successful
+      loggedOutSection.style.display = 'none';
+      loggedInSection.style.display = 'flex';
+      closeModal(modalSignIn);
+      signinForm.reset();
+      
+      alert('Successfully signed in!');
+    });
+
+    signupForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = signupForm.name.value;
+      const email = signupForm.email.value;
+      const password = signupForm.password.value;
+      const confirmPassword = signupForm.passwordConfirm.value;
+      
+      if (password !== confirmPassword) {
+        alert('Passwords do not match!');
+        return;
+      }
+      
+      // Simulate registration
+      console.log('Registering:', name, email, password);
+      
+      // For demo purposes - assume registration is successful
+      loggedOutSection.style.display = 'none';
+      loggedInSection.style.display = 'flex';
+      document.querySelector('.user-name').textContent = name;
+      closeModal(modalSignUp);
+      signupForm.reset();
+      
+      alert('Account created successfully! You are now signed in.');
+    });
+
+    // Logout functionality (click on profile)
+    loggedInSection.addEventListener('click', () => {
+      if (confirm('Are you sure you want to sign out?')) {
+        loggedOutSection.style.display = 'flex';
+        loggedInSection.style.display = 'none';
+        alert('You have been signed out.');
+      }
+    });
+  </script>
+</body>
+</html>
+
+  <h1>AI Fitness Coach</h1>
+  
+  <div class="container">
+    <div class="video-container">
+      <div class="video-wrapper">
+        <video id="camera" autoplay muted playsinline></video>
+        <canvas id="pose-canvas"></canvas>
+      </div>
+      
+      <div class="exercise-selector">
+        <label for="exercise-type">Select Exercise</label>
+        <select id="exercise-type">
+          <option value="squats">Squats</option>
+          <option value="pushups">Push-ups</option>
+          <option value="lunges">Lunges</option>
+          <option value="bicep_curls">Bicep Curls</option>
+          <option value="shoulder_press">Shoulder Press</option>
+        </select>
+        
+        <label for="difficulty">Difficulty Level</label>
+        <select id="difficulty">
+          <option value="beginner">Beginner</option>
+          <option value="intermediate">Intermediate</option>
+          <option value="advanced">Advanced</option>
+        </select>
+        
+        <button id="start-btn">Start Workout</button>
+        <button id="reset-btn">Reset</button>
+      </div>
+    </div>
+    
+    <div class="stats-container">
+      <div class="status-card">
+        <div class="status-title">Exercise</div>
+        <div class="status-value" id="current-exercise">Ready</div>
+      </div>
+      
+      <div class="status-card">
+        <div class="status-title">Pose Detection</div>
+        <div class="status-value" id="pose-status">Waiting...</div>
+      </div>
+      
+      <div class="status-card">
+        <div class="status-title">Reps Count</div>
+        <div class="status-value" id="reps-count">0</div>
+        <div class="progress-container">
+          <div>Progress: <span id="reps-progress">0</span>%</div>
+          <div class="progress-bar">
+            <div class="progress-fill" id="reps-progress-bar"></div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="status-card">
+        <div class="status-title">Workout Timer</div>
+        <div class="status-value" id="workout-timer">00:00</div>
+      </div>
+      
+      <div class="status-card">
+        <div class="status-title">Calories Burned</div>
+        <div class="status-value" id="calories">0 kcal</div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="recommendations">
+    <h3>AI Recommendations</h3>
+    <div id="recommendations-list">
+      <div class="recommendation-item">Start your workout to receive personalized recommendations</div>
+    </div>
+  </div>
+  
+  <div class="chart-container">
+    <h3>Workout Progress</h3>
+    <canvas id="progress-chart"></canvas>
+  </div>
+  
+  <footer>
+    <div class="footer-content">
+      <div class="footer-links">
+        <h3>About Us</h3>
+        <ul>
+          <li><a href="index.html#about">Our Story</a></li>
+          <li><a href="index.html#founders">Our Team</a></li>
+        </ul>
+      </div>
+      <div class="footer-links">
+        <h3>Help & Support</h3>
+        <ul>
+          <li><a href="settings.html">Contact Us</a></li>
+          <li><a href="terms.html">Terms & Conditions</a></li>
+        </ul>
+      </div>
+      <div class="footer-links">
+        <h3>Follow Us</h3>
+        <ul>
+          <li><a href="https://www.facebook.com/share/p/12EZbqKwPMY/">Facebook</a></li>
+        <li><a href="http://www.linkedin.com/in/trainx-ai-949624367">Linked in</a></li>
+        <li><a href="https://www.instagram.com/trainxai?igsh=NjkxYXZveXBkamM5">Instagram</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-copyright">
+      <p>&copy; 2025 TrainexAI. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    // DOM Elements
+    const video = document.getElementById('camera');
+    const canvas = document.getElementById('pose-canvas');
+    const ctx = canvas.getContext('2d');
+    const startBtn = document.getElementById('start-btn');
+    const resetBtn = document.getElementById('reset-btn');
+    const exerciseSelect = document.getElementById('exercise-type');
+    const difficultySelect = document.getElementById('difficulty');
+    const poseStatus = document.getElementById('pose-status');
+    const repsCount = document.getElementById('reps-count');
+    const workoutTimer = document.getElementById('workout-timer');
+    const caloriesBurned = document.getElementById('calories');
+    const currentExercise = document.getElementById('current-exercise');
+    const repsProgress = document.getElementById('reps-progress');
+    const repsProgressBar = document.getElementById('reps-progress-bar');
+    const recommendationsList = document.getElementById('recommendations-list');
+    
+    // Variables
+    let detector;
+    let isTracking = false;
+    let reps = 0;
+    let seconds = 0;
+    let timerInterval;
+    let calories = 0;
+    let currentExerciseType = '';
+    let targetReps = 10;
+    let formFeedback = '';
+    let workoutHistory = [];
+    let chart;
+    
+    // Initialize Chart
+    function initChart() {
+      const ctx = document.getElementById('progress-chart').getContext('2d');
+      chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: [],
+          datasets: [{
+            label: 'Reps Completed',
+            data: [],
+            borderColor: '#6a4bcf',
+            backgroundColor: 'rgba(106, 75, 207, 0.1)',
+            tension: 0.3,
+            fill: true
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+    }
+    
+    // Update Chart
+    function updateChart() {
+      const now = new Date();
+      const timeLabel = `${now.getHours()}:${now.getMinutes().toString().padStart(2, '0')}`;
+      
+      chart.data.labels.push(timeLabel);
+      chart.data.datasets[0].data.push(reps);
+      
+      if (chart.data.labels.length > 10) {
+        chart.data.labels.shift();
+        chart.data.datasets[0].data.shift();
+      }
+      
+      chart.update();
+    }
+    
+    // Initialize Pose Detection
+    async function initPoseDetection() {
+  try {
+      await tf.ready();
+      detector = await poseDetection.createDetector(
+        poseDetection.SupportedModels.MoveNet,
+        { modelType: poseDetection.movenet.modelType.SINGLEPOSE_THUNDER }
+      );
+      
+      console.log('Pose detector initialized');
+  } catch (err) {
+    console.error('Pose detection init error:', err);
+  }
+    }
+    
+    // Start Camera
+    async function startCamera() {
+  console.log('Attempting to access camera...');
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ 
+          video: { 
+            width: { ideal: 1280 },
+            height: { ideal: 720 },
+            facingMode: 'user' 
+          } 
+        });
+        video.srcObject = stream;
+        
+        video.onloadedmetadata = () => {
+    console.log('Camera metadata loaded');
+          canvas.width = video.videoWidth;
+          canvas.height = video.videoHeight;
+        };
+        
+        return true;
+      } catch (err) {
+        console.error('Camera error:', err);
+        poseStatus.textContent = 'Camera access denied';
+        return false;
+      }
+    }
+    
+    // Detect Poses
+    async function detectPose() {
+      if (!isTracking) return;
+      
+      try {
+        const poses = await detector.estimatePoses(video);
+        drawPoses(poses);
+        
+        if (poses.length > 0) {
+          const keypoints = poses[0].keypoints;
+          analyzeExercise(keypoints);
+        }
+        
+        requestAnimationFrame(detectPose);
+      } catch (err) {
+        console.error('Pose detection error:', err);
+        poseStatus.textContent = 'Detection error';
+        setTimeout(detectPose, 100);
+      }
+    }
+    
+    // Draw Poses on Canvas
+    function drawPoses(poses) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      if (poses.length > 0) {
+        const keypoints = poses[0].keypoints;
+        
+        // Draw keypoints
+        for (const keypoint of keypoints) {
+          if (keypoint.score > 0.3) {
+            ctx.beginPath();
+            ctx.arc(keypoint.x, keypoint.y, 5, 0, 2 * Math.PI);
+            ctx.fillStyle = '#ff5c9e';
+            ctx.fill();
+          }
+        }
+        
+        // Draw skeleton
+        const adjacentKeyPoints = poseDetection.util.getAdjacentKeyPoints(
+          keypoints, 0.3
+        );
+        
+        for (const [i, j] of adjacentKeyPoints) {
+          ctx.beginPath();
+          ctx.moveTo(i.x, i.y);
+          ctx.lineTo(j.x, j.y);
+          ctx.lineWidth = 2;
+          ctx.strokeStyle = '#6a4bcf';
+          ctx.stroke();
+        }
+      }
+    }
+    
+    // Analyze Exercise Form
+    function analyzeExercise(keypoints) {
+      const exercise = exerciseSelect.value;
+      currentExerciseType = exercise;
+      currentExercise.textContent = exercise.charAt(0).toUpperCase() + exercise.slice(1).replace('_', ' ');
+      
+      let feedback = '';
+      let isCompleteRep = false;
+      
+      switch (exercise) {
+        case 'squats':
+          const hips = findKeypoint(keypoints, 'left_hip');
+          const knees = findKeypoint(keypoints, 'left_knee');
+          const ankles = findKeypoint(keypoints, 'left_ankle');
+          
+          if (hips && knees && ankles) {
+            const kneeAngle = calculateAngle(hips, knees, ankles);
+            
+            if (kneeAngle < 100) {
+              feedback = 'Good depth!';
+              isCompleteRep = true;
+            } else if (kneeAngle < 130) {
+              feedback = 'Go deeper for full range';
+            } else {
+              feedback = 'Start squatting down';
+            }
+            
+            // Check knee alignment
+            const kneeX = knees.x;
+            const ankleX = ankles.x;
+            
+            if (Math.abs(kneeX - ankleX) > 30) {
+              feedback += ' | Keep knees over ankles';
+            }
+          }
+          break;
+          
+        case 'pushups':
+          const leftShoulder = findKeypoint(keypoints, 'left_shoulder');
+          const leftElbow = findKeypoint(keypoints, 'left_elbow');
+          const leftWrist = findKeypoint(keypoints, 'left_wrist');
+          
+          if (leftShoulder && leftElbow && leftWrist) {
+            const elbowAngle = calculateAngle(leftShoulder, leftElbow, leftWrist);
+            
+            if (elbowAngle < 90) {
+              feedback = 'Good depth!';
+              isCompleteRep = true;
+            } else if (elbowAngle < 120) {
+              feedback = 'Go lower for full range';
+            } else {
+              feedback = 'Start pushing down';
+            }
+            
+            // Check body alignment
+            const nose = findKeypoint(keypoints, 'nose');
+            if (nose && leftShoulder && leftWrist) {
+              if (Math.abs(nose.y - leftShoulder.y) > 50 || Math.abs(nose.y - leftWrist.y) > 50) {
+                feedback += ' | Keep your body straight';
+              }
+            }
+          }
+          break;
+          
+        case 'lunges':
+          const leftHip = findKeypoint(keypoints, 'left_hip');
+          const leftKnee = findKeypoint(keypoints, 'left_knee');
+          const leftAnkle = findKeypoint(keypoints, 'left_ankle');
+          const rightHip = findKeypoint(keypoints, 'right_hip');
+          const rightKnee = findKeypoint(keypoints, 'right_knee');
+          const rightAnkle = findKeypoint(keypoints, 'right_ankle');
+          
+          if (leftHip && leftKnee && leftAnkle && rightHip && rightKnee && rightAnkle) {
+            const frontKneeAngle = calculateAngle(leftHip, leftKnee, leftAnkle);
+            const backKneeAngle = calculateAngle(rightHip, rightKnee, rightAnkle);
+            
+            if (frontKneeAngle < 90 && backKneeAngle < 90) {
+              feedback = 'Good lunge!';
+              isCompleteRep = true;
+            } else if (frontKneeAngle < 120 || backKneeAngle < 120) {
+              feedback = 'Go deeper for full range';
+            } else {
+              feedback = 'Start lunging down';
+            }
+            
+            // Check knee alignment
+            if (Math.abs(leftKnee.x - leftAnkle.x) > 30) {
+              feedback += ' | Keep front knee over ankle';
+            }
+          }
+          break;
+      }
+      
+      poseStatus.textContent = feedback || 'Good form!';
+      formFeedback = feedback;
+      
+      // Count reps
+      if (isCompleteRep) {
+        reps++;
+        repsCount.textContent = reps;
+        
+        // Update progress
+        const progress = Math.min(100, Math.round((reps / targetReps) * 100));
+        repsProgress.textContent = progress;
+        repsProgressBar.style.width = `${progress}%`;
+        
+        // Calculate calories (very rough estimate)
+        calories += 0.5;
+        caloriesBurned.textContent = `${calories.toFixed(1)} kcal`;
+        
+        updateChart();
+        generateRecommendations();
+      }
+    }
+    
+    // Helper function to find keypoint by name
+    function findKeypoint(keypoints, name) {
+      return keypoints.find(kp => kp.name === name && kp.score > 0.3);
+    }
+    
+    // Helper function to calculate angle between three points
+    function calculateAngle(a, b, c) {
+      const ab = Math.sqrt(Math.pow(b.x - a.x, 2) + Math.pow(b.y - a.y, 2));
+      const bc = Math.sqrt(Math.pow(b.x - c.x, 2) + Math.pow(b.y - c.y, 2));
+      const ac = Math.sqrt(Math.pow(c.x - a.x, 2) + Math.pow(c.y - a.y, 2));
+      
+      const angle = Math.acos((ab * ab + bc * bc - ac * ac) / (2 * ab * bc));
+      return angle * (180 / Math.PI);
+    }
+    
+    // Generate AI Recommendations
+    function generateRecommendations() {
+      const exercise = exerciseSelect.value;
+      const difficulty = difficultySelect.value;
+      let recommendations = [];
+      
+      // Base recommendations
+      if (reps < targetReps * 0.3) {
+        recommendations.push("You're just getting started! Focus on maintaining good form.");
+      } else if (reps < targetReps * 0.7) {
+        recommendations.push("Great progress! Try to maintain a steady pace.");
+      } else {
+        recommendations.push("You're almost there! Push through the last few reps.");
+      }
+      
+      // Exercise-specific recommendations
+      if (exercise === 'squats') {
+        recommendations.push("Keep your chest up and core engaged throughout the movement.");
+        
+        if (difficulty === 'beginner') {
+          recommendations.push("Try squatting to a chair to help with depth control.");
+        } else if (difficulty === 'advanced') {
+          recommendations.push("For an extra challenge, try pausing at the bottom of each squat.");
+        }
+      } else if (exercise === 'pushups') {
+        recommendations.push("Maintain a straight line from your head to your heels.");
+        
+        if (formFeedback.includes('straight')) {
+          recommendations.push("Engage your core to prevent your hips from sagging or rising.");
+        }
+      }
+      
+      // Hydration reminder
+      if (seconds > 120 && seconds % 300 < 100) {
+        recommendations.push("Remember to stay hydrated! Take a sip of water if needed.");
+      }
+      
+      // Update recommendations display
+      recommendationsList.innerHTML = recommendations
+        .map(rec => `<div class="recommendation-item">${rec}</div>`)
+        .join('');
+    }
+    
+    // Start Workout
+    async function startWorkout() {
+  console.log('Start workout clicked');
+      if (isTracking) return;
+      
+      const cameraStarted = await startCamera();
+      if (!cameraStarted) return;
+      
+      isTracking = true;
+      startBtn.textContent = 'Pause Workout';
+      
+      // Set target reps based on difficulty
+      const difficulty = difficultySelect.value;
+      targetReps = difficulty === 'beginner' ? 8 : difficulty === 'intermediate' ? 12 : 15;
+      
+      // Start timer
+      seconds = 0;
+      timerInterval = setInterval(() => {
+        seconds++;
+        const minutes = Math.floor(seconds / 60);
+        const remainingSeconds = seconds % 60;
+        workoutTimer.textContent = `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+        
+        // Generate periodic recommendations
+        if (seconds % 30 === 0) {
+          generateRecommendations();
+        }
+      }, 1000);
+      
+      // Start pose detection
+      detectPose();
+    }
+    
+    // Pause Workout
+    function pauseWorkout() {
+      isTracking = false;
+      startBtn.textContent = 'Resume Workout';
+      clearInterval(timerInterval);
+    }
+    
+    // Reset Workout
+    function resetWorkout() {
+      isTracking = false;
+      startBtn.textContent = 'Start Workout';
+      clearInterval(timerInterval);
+      
+      reps = 0;
+      seconds = 0;
+      calories = 0;
+      
+      repsCount.textContent = '0';
+      workoutTimer.textContent = '00:00';
+      caloriesBurned.textContent = '0 kcal';
+      repsProgress.textContent = '0';
+      repsProgressBar.style.width = '0%';
+      poseStatus.textContent = 'Waiting...';
+      currentExercise.textContent = 'Ready';
+      
+      recommendationsList.innerHTML = '<div class="recommendation-item">Start your workout to receive personalized recommendations</div>';
+    }
+    
+    // Event Listeners
+    startBtn.addEventListener('click', () => {
+      if (isTracking) {
+        pauseWorkout();
+      } else {
+        startWorkout();
+      }
+    });
+    
+    resetBtn.addEventListener('click', resetWorkout);
+    
+    exerciseSelect.addEventListener('change', () => {
+      if (isTracking) {
+        resetWorkout();
+      }
+    });
+    
+    // Initialize
+    window.addEventListener('load', async () => {
+      initChart();
+      await initPoseDetection();
+      
+      // Demo workout history for chart
+      workoutHistory = [
+        { time: '10:00', reps: 5 },
+        { time: '10:30', reps: 10 },
+        { time: '11:00', reps: 15 }
+      ];
+      
+      console.log('AI Fitness Coach initialized');
+    });
+  </script>
+</body>
+</html>

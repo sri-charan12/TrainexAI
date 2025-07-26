@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Fitness App - Gym Requirements</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+    :root {
+      --blue-pink-gradient: linear-gradient(135deg, #5f72be, #ffc2d1);
+      --blue-pink-gradient-alt: linear-gradient(135deg, #6a4bcf, #ff5c9e);
+      --background-dark: #000;
+      --text-light: #eee;
+      --accent-color: #ff5c9e;
+      --shadow-color: rgba(255, 92, 158, 0.45);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--background-dark);
+      color: var(--text-light);
+      overflow-x: hidden;
+      min-height: 100vh;
+      position: relative;
+      padding: 20px;
+    }
+
+    /* Animated black and white background pattern */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      background:
+        radial-gradient(circle at 10% 20%, #fff4 1px, transparent 1px),
+        radial-gradient(circle at 90% 80%, #fff4 1px, transparent 1px);
+      background-size: 80px 80px;
+      pointer-events: none;
+      animation: bgMove 60s linear infinite;
+      filter: grayscale(100%) contrast(1.2) brightness(1.1);
+      z-index: -1;
+    }
+
+    @keyframes bgMove {
+      from { background-position: 0 0, 0 0;}
+      to { background-position: 80px 80px, 80px 80px;}
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 40px auto;
+      background: rgba(20, 20, 20, 0.9);
+      padding: 2.5rem;
+      border-radius: 20px;
+      box-shadow: 0 15px 40px var(--shadow-color);
+      backdrop-filter: blur(12px);
+      animation: fadeIn 1.7s ease forwards;
+    }
+
+    @keyframes fadeIn {
+      from {opacity: 0;}
+      to {opacity: 0.92;}
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 2.5rem;
+      font-weight: 700;
+      background: var(--blue-pink-gradient-alt);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 1.2rem;
+      text-shadow: 0 0 15px var(--accent-color);
+      animation: slideInFromLeft 1s ease forwards;
+      opacity: 0;
+    }
+
+    @keyframes slideInFromLeft {
+      from {
+        transform: translateX(-50px);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    p {
+      font-size: 1.1rem;
+      line-height: 1.8;
+      opacity: 0.92;
+      margin-bottom: 2rem;
+      color: #ddd;
+      animation: fadeIn 1.7s ease forwards;
+    }
+
+    .level-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin: 30px 0;
+      flex-wrap: wrap;
+    }
+
+    .level-btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 9999px;
+      background: rgba(255, 92, 158, 0.2);
+      color: var(--text-light);
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      font-size: 1rem;
+      letter-spacing: 0.05em;
+      box-shadow: 0 5px 20px rgba(255, 92, 158, 0.2);
+    }
+
+    .level-btn:hover {
+      background: rgba(255, 92, 158, 0.4);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 30px var(--shadow-color);
+      color: var(--accent-color);
+      text-shadow: 0 0 6px var(--accent-color);
+    }
+
+    .level-btn.active {
+      background: var(--accent-color);
+      color: white;
+      box-shadow: 0 9px 30px var(--shadow-color);
+      text-shadow: 0 0 8px var(--accent-color);
+    }
+
+    .requirements-container {
+      background: rgba(30, 30, 40, 0.7);
+      padding: 2rem;
+      border-radius: 15px;
+      border: 1px solid rgba(255, 92, 158, 0.2);
+      animation: fadeIn 2s ease forwards;
+    }
+
+    .requirements-container h2 {
+      margin-top: 0;
+      font-size: 1.8rem;
+      color: var(--accent-color);
+      border-bottom: 2px solid var(--accent-color);
+      padding-bottom: 12px;
+      margin-bottom: 1.5rem;
+      text-shadow: 0 0 10px var(--accent-color);
+    }
+
+    .requirements-container h3 {
+      color: #ddd;
+      margin: 1.5rem 0 1rem;
+      font-size: 1.3rem;
+      font-weight: 600;
+    }
+
+    .requirements-container ul {
+      padding-left: 25px;
+      list-style-type: none;
+    }
+
+    .requirements-container li {
+      margin-bottom: 12px;
+      position: relative;
+      padding-left: 25px;
+      color: #bbb;
+      line-height: 1.6;
+    }
+
+    .requirements-container li:before {
+      content: "•";
+      color: var(--accent-color);
+      font-size: 1.5rem;
+      position: absolute;
+      left: 0;
+      top: -3px;
+    }
+
+    .usage {
+      background: rgba(106, 75, 207, 0.2);
+      color: white;
+      padding: 1.2rem;
+      border-radius: 12px;
+      margin-top: 2rem;
+      border-left: 4px solid var(--accent-color);
+      animation: glowPulse 4s ease-in-out infinite;
+    }
+
+    .usage strong {
+      color: var(--accent-color);
+      font-weight: 600;
+    }
+
+    @keyframes glowPulse {
+      0%, 100% {
+        box-shadow: 0 0 15px rgba(255, 92, 158, 0.3);
+      }
+      50% {
+        box-shadow: 0 0 25px rgba(255, 92, 158, 0.5);
+      }
+    }
+
+    .equipment-section, .workouts-section {
+      margin-bottom: 2rem;
+      animation: fadeIn 1.5s ease forwards;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 1.5rem;
+        margin: 20px auto;
+      }
+      
+      h1 {
+        font-size: 2rem;
+      }
+      
+      .level-buttons {
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      .level-btn {
+        width: 100%;
+        max-width: 250px;
+      }
+      
+      .requirements-container {
+        padding: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>AI Fitness App</h1>
+    <p>Select your fitness level to see recommended gym equipment and workouts:</p>
+    
+    <div class="level-buttons">
+      <button class="level-btn active" data-level="beginner">Beginner</button>
+      <button class="level-btn" data-level="intermediate">Intermediate</button>
+      <button class="level-btn" data-level="advanced">Advanced</button>
+    </div>
+
+    <div id="requirements" class="requirements-container">
+      <!-- Content will be loaded here by JavaScript -->
+    </div>
+  </div>
+
+  <script>
+    // Gym requirements data
+    const gymRequirements = {
+      beginner: {
+        equipment: [
+          "Dumbbells (5-15 lbs)",
+          "Resistance Bands",
+          "Yoga Mat",
+          "Stability Ball",
+          "Pull-Up Bar (Assisted)",
+          "Treadmill/Stationary Bike"
+        ],
+        workouts: [
+          "Bodyweight Squats (3x10)",
+          "Push-Ups (Knees if needed) (3x8)",
+          "Dumbbell Rows (3x10)",
+          "Plank (30-60 seconds)",
+          "Assisted Pull-Ups (3x5)",
+          "Walking Lunges (3x10 per leg)"
+        ],
+        usage: "Workout 3 times per week. Focus on proper form and full-body movements. Include 10-15 minutes of light cardio."
+      },
+      intermediate: {
+        equipment: [
+          "Barbell & Weight Plates",
+          "Adjustable Bench",
+          "Kettlebells (15-35 lbs)",
+          "Cable Machine",
+          "Jump Rope",
+          "Foam Roller"
+        ],
+        workouts: [
+          "Barbell Squats (4x6-8)",
+          "Deadlifts (3x5)",
+          "Bench Press (4x6-8)",
+          "Lat Pulldowns (3x10)",
+          "Kettlebell Swings (3x15)",
+          "HIIT Circuit (20 minutes)"
+        ],
+        usage: "Workout 4-5 times per week using split routines (Push/Pull/Legs). Focus on progressive overload and include 1-2 HIIT sessions weekly."
+      },
+      advanced: {
+        equipment: [
+          "Olympic Weightlifting Set",
+          "Power Rack/Squat Stand",
+          "Plyometric Box (24\")",
+          "Battle Ropes",
+          "Weighted Vest/Dip Belt",
+          "Heart Rate Monitor"
+        ],
+        workouts: [
+          "Clean & Jerk (5x3)",
+          "Weighted Pull-Ups (4x6)",
+          "Box Jumps (4x8)",
+          "Battle Rope Circuits (4 rounds)",
+          "Sprint Intervals (10x100m)",
+          "Muscle-Up Practice"
+        ],
+        usage: "Train 5-6 times per week with periodized programming. Incorporate advanced techniques like supersets, drop sets, and Olympic lifts. Track performance metrics."
+      }
+    };
+
+    // DOM elements
+    const levelButtons = document.querySelectorAll('.level-btn');
+    const requirementsContainer = document.getElementById('requirements');
+
+    // Function to update displayed requirements
+    function updateRequirements(level) {
+      const req = gymRequirements[level];
+      
+      requirementsContainer.innerHTML = `
+        <h2>${level.charAt(0).toUpperCase() + level.slice(1)} Level</h2>
+        
+        <div class="equipment-section">
+          <h3>Recommended Equipment:</h3>
+          <ul>
+            ${req.equipment.map(item => `<li>${item}</li>`).join('')}
+          </ul>
+        </div>
+        
+        <div class="workouts-section">
+          <h3>Sample Workouts:</h3>
+          <ul>
+            ${req.workouts.map(workout => `<li>${workout}</li>`).join('')}
+          </ul>
+        </div>
+        
+        <div class="usage">
+          <strong>Training Plan:</strong> ${req.usage}
+        </div>
+      `;
+    }
+
+    // Event listeners for level buttons
+    levelButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        // Update active button
+        levelButtons.forEach(btn => btn.classList.remove('active'));
+        button.classList.add('active');
+        
+        // Update requirements display
+        updateRequirements(button.dataset.level);
+      });
+    });
+
+    // Initialize with beginner level
+    updateRequirements('beginner');
+  </script>
+</body>
+</html>
+
+
+<footer>
+  <div class="footer-content">
+    <div class="footer-links">
+      <h3>About Us</h3>
+      <ul>
+        <li><a href="index.html#about">Our Story</a></li>
+        <li><a href="index.html#founders">Our Team</a></li>
+
+      </ul>
+    </div>
+    <div class="footer-links">
+      <h3>Help & Support</h3>
+      <ul>
+        <li><a href="settings.html">Contact Us</a></li>
+        <li><a href="terms.html">Terms & Conditions</a></li>
+      </ul>
+    </div>
+    <div class="footer-links">
+      <h3>Follow Us</h3>
+      <ul>
+       <li><a href="https://www.facebook.com/share/p/12EZbqKwPMY/">Facebook</a></li>
+        <li><a href="http://www.linkedin.com/in/trainx-ai-949624367">Linked in</a></li>
+        <li><a href="https://www.instagram.com/trainxai?igsh=NjkxYXZveXBkamM5">Instagram</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-copyright">
+    <p>&copy; 2025 TrainexAI. All rights reserved.</p>
+  </div>
+</footer>
+
+<style>
+  footer {
+    background: rgba(15, 15, 15, 0.95);
+    color: #eee;
+    text-align: center;
+    padding: 1.8rem 1rem;
+    font-size: 0.9rem;
+    box-shadow: 0 -2px 12px rgba(255, 92, 158, 0.45);
+    margin-top: 3rem;
+    user-select: none;
+  }
+
+  .footer-content {
+    display: flex;
+    justify-content: space-between;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .footer-links {
+    margin: 20px;
+    text-align: left;
+  }
+
+  .footer-links h3 {
+    margin-bottom: 10px;
+    color: #ff5c9e;
+    text-shadow: 0 0 8px rgba(255, 92, 158, 0.5);
+  }
+
+  .footer-links ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .footer-links li {
+    margin-bottom: 10px;
+  }
+
+  .footer-links a {
+    color: #ddd;
+    text-decoration: none;
+    transition: color 0.3s ease, text-shadow 0.3s ease;
+  }
+
+  .footer-links a:hover {
+    color: #ff5c9e;
+    text-shadow: 0 0 6px #ff5c9e;
+  }
+
+  .footer-copyright {
+    margin-top: 20px;
+    font-size: 14px;
+    color: #aaa;
+  }
+
+  @media (max-width: 768px) {
+    .footer-content {
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    .footer-links {
+      text-align: center;
+      margin: 15px 0;
+    }
+  }
+</style>
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TrainexAI Header</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --accent-color: #ff5c9e;
+      --text-light: #eee;
+      --shadow-color: rgba(255, 92, 158, 0.45);
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #000;
+      color: var(--text-light);
+    }
+    
+    nav {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      background: rgba(20, 20, 20, 0.9);
+      backdrop-filter: blur(12px);
+      box-shadow: 0 2px 12px var(--shadow-color);
+      z-index: 1000;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.85rem 2rem;
+    }
+    
+    .logo-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.logo {
+  height: 42px;
+  width: auto;
+  transition: transform 0.3s ease, filter 0.3s ease;
+  filter: drop-shadow(0 0 6px var(--accent-color));
+}
+
+.logo:hover {
+  transform: scale(1.08);
+  filter: drop-shadow(0 0 10px var(--accent-color));
+}
+
+.logo-text {
+  font-weight: 700;
+  font-size: 1.7rem;
+  color: var(--accent-color);
+  letter-spacing: 2px;
+  text-shadow: 0 0 8px var(--accent-color);
+  transition: text-shadow 0.3s ease;
+}
+
+.logo-container:hover .logo-text {
+  text-shadow: 0 0 12px var(--accent-color);
+}
+    
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 1.8rem;
+      align-items: center;
+    }
+    
+    nav ul li a,
+    nav ul li button {
+      color: var(--text-light);
+      font-weight: 500;
+      text-decoration: none;
+      padding: 0.55rem 1rem;
+      border-radius: 7px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-size: 1.05rem;
+      transition: color 0.3s ease, background 0.3s ease, text-shadow 0.3s ease;
+    }
+    
+    nav ul li a:hover,
+    nav ul li a:focus,
+    nav ul li button:hover,
+    nav ul li button:focus {
+      color: var(--accent-color);
+      background: rgba(255, 92, 158, 0.2);
+      outline: none;
+      text-shadow: 0 0 6px var(--accent-color);
+    }
+    
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      cursor: pointer;
+    }
+    
+    .user-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--accent-color);
+      transition: transform 0.3s ease;
+    }
+    
+    .user-avatar:hover {
+      transform: scale(1.1);
+    }
+    
+    .user-name {
+      font-weight: 500;
+      font-size: 0.95rem;
+    }
+    
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      cursor: pointer;
+    }
+    
+    .hamburger span {
+      width: 26px;
+      height: 3px;
+      background: var(--accent-color);
+      margin: 5px 0;
+      border-radius: 3px;
+      transition: 0.3s;
+      filter: drop-shadow(0 0 3px var(--accent-color));
+    }
+    
+    /* Modal styles */
+    .modal-bg {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 15, 25, 0.97);
+      backdrop-filter: blur(10px);
+      z-index: 1600;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .modal-bg.active {
+      display: flex;
+    }
+    
+    .modal {
+      background: #141422;
+      border-radius: 20px;
+      padding: 2.5rem 2.7rem;
+      max-width: 440px;
+      width: 90vw;
+      box-shadow: 0 10px 40px var(--shadow-color);
+      animation: modalFadeIn 0.46s ease forwards;
+      color: var(--text-light);
+      position: relative;
+      font-size: 1rem;
+    }
+    
+    @keyframes modalFadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-35px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .modal h3 {
+      margin-bottom: 1.8rem;
+      font-size: 2.1rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #6a4bcf, #ff5c9e);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 15px var(--accent-color);
+    }
+    
+    .modal label {
+      font-weight: 700;
+      display: block;
+      margin-top: 1.2rem;
+      letter-spacing: 0.02em;
+      color: #eee;
+    }
+    
+    .modal input[type="text"],
+    .modal input[type="password"],
+    .modal input[type="email"] {
+      width: 100%;
+      padding: 0.82rem;
+      margin-top: 7px;
+      border-radius: 10px;
+      border: none;
+      font-family: 'Poppins', sans-serif;
+      font-size: 1rem;
+      background: #22222f;
+      color: #eee;
+      box-shadow: inset 0 0 8px #111;
+      transition: box-shadow 0.3s ease;
+    }
+    
+    .modal input[type="text"]:focus,
+    .modal input[type="password"]:focus,
+    .modal input[type="email"]:focus {
+      outline: none;
+      box-shadow: 0 0 10px var(--accent-color);
+      background: #29293e;
+    }
+    
+    .modal .submit-btn {
+      margin-top: 2rem;
+      background: var(--accent-color);
+      border: none;
+      padding: 0.95rem 1.8rem;
+      font-size: 1.2rem;
+      font-weight: 700;
+      border-radius: 9999px;
+      cursor: pointer;
+      box-shadow: 0 8px 30px var(--shadow-color);
+      transition: background-color 0.35s ease;
+      width: 100%;
+    }
+    
+    .modal .submit-btn:hover {
+      background: #ff2f80;
+    }
+    
+    .modal button.close-btn {
+      position: absolute;
+      top: 1rem;
+      right: 1.3rem;
+      background: transparent;
+      border: none;
+      font-size: 2.4rem;
+      color: var(--accent-color);
+      cursor: pointer;
+      filter: drop-shadow(0 0 7px var(--accent-color));
+      transition: color 0.3s ease;
+    }
+    
+    .modal button.close-btn:hover {
+      color: #ff3e9f;
+    }
+    
+    .auth-buttons {
+      display: flex;
+      gap: 1rem;
+    }
+    
+    @media only screen and (max-width: 900px) {
+      nav ul {
+        position: fixed;
+        top: 65px;
+        right: -100%;
+        background: rgba(20,20,20,0.97);
+        height: calc(100vh - 65px);
+        width: 220px;
+        flex-direction: column;
+        padding: 1.5rem;
+        gap: 1.5rem;
+        box-shadow: -3px 0 12px var(--shadow-color);
+        transition: right 0.35s ease;
+        border-radius: 0 0 0 15px;
+        z-index: 9999;
+      }
+      
+      nav ul.active {
+        right: 0;
+      }
+      
+      .hamburger {
+        display: flex;
+      }
+      
+      .auth-buttons {
+        flex-direction: column;
+        width: 100%;
+      }
+      
+      .auth-buttons button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+     <div class="logo-container" tabindex="0">
+    <img src="logo.jpg" alt="TrainexAI Logo" class="logo">
+    <span class="logo-text">TrainexAI</span>
+  </div>
+    <ul id="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="index.html#about">Features</a></li>
+      <li><a href="index.html#pricing">Pricing</a></li>
+      
+      <!-- Conditional rendering based on auth state -->
+      <li id="auth-section">
+        <!-- When logged out -->
+        <div id="logged-out" class="auth-buttons">
+          <button id="btn-signin">Sign In</button>
+          <button id="btn-signup">Sign Up</button>
+        </div>
+        
+        <!-- When logged in -->
+        <div id="logged-in" style="display: none;" class="user-profile">
+          <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="User profile" class="user-avatar">
+          <span class="user-name">John Doe</span>
+        </div>
+      </li>
+    </ul>
+    <div class="hamburger">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  </nav>
+
+  <!-- Sign In Modal -->
+  <div id="modal-signin" class="modal-bg">
+    <div class="modal">
+      <button class="close-btn">&times;</button>
+      <h3>Sign In</h3>
+      <form id="signin-form">
+        <label for="signin-email">Email</label>
+        <input type="email" id="signin-email" name="email" required placeholder="you@example.com">
+        
+        <label for="signin-password">Password</label>
+        <input type="password" id="signin-password" name="password" required placeholder="Your password">
+        
+        <button type="submit" class="submit-btn">Sign In</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Sign Up Modal -->
+  <div id="modal-signup" class="modal-bg">
+    <div class="modal">
+      <button class="close-btn">&times;</button>
+      <h3>Sign Up</h3>
+      <form id="signup-form">
+        <label for="signup-name">Full Name</label>
+        <input type="text" id="signup-name" name="name" required placeholder="Your full name">
+        
+        <label for="signup-email">Email</label>
+        <input type="email" id="signup-email" name="email" required placeholder="you@example.com">
+        
+        <label for="signup-password">Password</label>
+        <input type="password" id="signup-password" name="password" required placeholder="Create a password">
+        
+        <label for="signup-confirm">Confirm Password</label>
+        <input type="password" id="signup-confirm" name="passwordConfirm" required placeholder="Confirm password">
+        
+        <button type="submit" class="submit-btn">Create Account</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // DOM Elements
+    const hamburger = document.querySelector('.hamburger');
+    const navLinks = document.getElementById('nav-links');
+    const signInBtn = document.getElementById('btn-signin');
+    const signUpBtn = document.getElementById('btn-signup');
+    const modalSignIn = document.getElementById('modal-signin');
+    const modalSignUp = document.getElementById('modal-signup');
+    const loggedOutSection = document.getElementById('logged-out');
+    const loggedInSection = document.getElementById('logged-in');
+    const signinForm = document.getElementById('signin-form');
+    const signupForm = document.getElementById('signup-form');
+
+    // Toggle mobile menu
+    hamburger.addEventListener('click', () => {
+      navLinks.classList.toggle('active');
+      hamburger.classList.toggle('active');
+    });
+
+    // Modal functions
+    function openModal(modal) {
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal(modal) {
+      modal.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    // Event listeners for modals
+    signInBtn.addEventListener('click', () => openModal(modalSignIn));
+    signUpBtn.addEventListener('click', () => openModal(modalSignUp));
+
+    document.querySelectorAll('.modal .close-btn').forEach(btn => {
+      btn.addEventListener('click', () => closeModal(btn.closest('.modal-bg')));
+    });
+
+    window.addEventListener('click', (e) => {
+      if (e.target === modalSignIn) closeModal(modalSignIn);
+      if (e.target === modalSignUp) closeModal(modalSignUp);
+    });
+
+    // Form submission handlers
+    signinForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const email = signinForm.email.value;
+      const password = signinForm.password.value;
+      
+      // Simulate authentication
+      console.log('Signing in with:', email, password);
+      
+      // For demo purposes - assume login is successful
+      loggedOutSection.style.display = 'none';
+      loggedInSection.style.display = 'flex';
+      closeModal(modalSignIn);
+      signinForm.reset();
+      
+      alert('Successfully signed in!');
+    });
+
+    signupForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = signupForm.name.value;
+      const email = signupForm.email.value;
+      const password = signupForm.password.value;
+      const confirmPassword = signupForm.passwordConfirm.value;
+      
+      if (password !== confirmPassword) {
+        alert('Passwords do not match!');
+        return;
+      }
+      
+      // Simulate registration
+      console.log('Registering:', name, email, password);
+      
+      // For demo purposes - assume registration is successful
+      loggedOutSection.style.display = 'none';
+      loggedInSection.style.display = 'flex';
+      document.querySelector('.user-name').textContent = name;
+      closeModal(modalSignUp);
+      signupForm.reset();
+      
+      alert('Account created successfully! You are now signed in.');
+    });
+
+    // Logout functionality (click on profile)
+    loggedInSection.addEventListener('click', () => {
+      if (confirm('Are you sure you want to sign out?')) {
+        loggedOutSection.style.display = 'flex';
+        loggedInSection.style.display = 'none';
+        alert('You have been signed out.');
+      }
+    });
+  </script>
+</body>
+</html>
